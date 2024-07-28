@@ -4,9 +4,12 @@ import Layout from '@/components/Layout';
 import { useAuth } from '@/context/AuthContext';
 import GameManagement from '@/components/GameManagement';
 import { Loader2 } from 'lucide-react';
+import { useGameContext } from '@/context/GameContext';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function AdminPage() {
   const { user, loading } = useAuth();
+  const { games } = useGameContext();
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState(false);
 
@@ -34,9 +37,39 @@ export default function AdminPage() {
     return null;
   }
 
+  const totalGames = games.length;
+  const embeddedGames = games.filter(game => game.isEmbedded).length;
+  const regularGames = totalGames - embeddedGames;
+
   return (
     <Layout>
       <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Total Games</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">{totalGames}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Regular Games</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">{regularGames}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Embedded Games</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">{embeddedGames}</p>
+          </CardContent>
+        </Card>
+      </div>
       <GameManagement />
     </Layout>
   );

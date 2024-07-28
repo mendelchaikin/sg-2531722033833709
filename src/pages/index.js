@@ -89,7 +89,7 @@ export default function Home() {
       ) : (
         <GameGrid games={currentGames} onFavorite={handleFavorite} />
       )}
-      {filteredGames.length > gamesPerPage && (
+      {filteredGames.filter(game => !game.isEmbedded).length > gamesPerPage && (
         <div className="flex justify-center mt-8 space-x-2">
           {[...Array(Math.ceil(filteredGames.filter(game => !game.isEmbedded).length / gamesPerPage))].map((_, index) => (
             <Button

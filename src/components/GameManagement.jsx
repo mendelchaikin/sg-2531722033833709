@@ -4,8 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/components/ui/use-toast';
-import { Loader2, Edit, Save, X } from 'lucide-react';
+import { Loader2, Edit, Save, X, Search } from 'lucide-react';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
+import { Pagination } from '@/components/ui/pagination';
 
 export default function GameManagement() {
   const { games, addGame, removeGame, updateGame } = useGameContext();
@@ -20,6 +22,9 @@ export default function GameManagement() {
   });
   const [editingGame, setEditingGame] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const gamesPerPage = 10;
 
   const handleInputChange = (e, gameState, setGameState) => {
     const { name, value } = e.target;
@@ -144,6 +149,15 @@ export default function GameManagement() {
     setEditingGame(null);
   };
 
+  const filteredGames = games.filter(game =>
+    game.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    game.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const indexOfLastGame = currentPage * gamesPerPage;
+  const indexOfFirstGame = indexOfLastGame - gamesPerPage;
+  const currentGames = filteredGames.slice(indexOfFirstGame, indexOfLastGame);
+
   return (
     <ErrorBoundary>
       <div className="space-y-8">
@@ -205,8 +219,18 @@ export default function GameManagement() {
 
         <div>
           <h2 className="text-2xl font-bold mb-4">Existing Games</h2>
+          <div className="flex items-center space-x-2 mb-4">
+            <Search className="text-gray-400" />
+            <Input
+              type="text"
+              placeholder="Search games..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-grow"
+            />
+          </div>
           <ul className="space-y-4">
-            {games.map(game => (
+            {currentGames.map(game => (
               <li key={game.id} className="flex flex-col space-y-2 bg-gray-800 p-4 rounded-lg">
                 {editingGame && editingGame.id === game.id ? (
                   <>
@@ -276,16 +300,44 @@ export default function GameManagement() {
                         <Edit className="mr-2 h-4 w-4" />
                         Edit
                       </Button>
-                      <Button onClick={() => handleRemoveGame(game.id)} variant="destructive" disabled={isLoading}>
-                        {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                        Remove
-                      </Button>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="destructive">
+                            <X className="mr-2 h-4 w-4" />
+                            Remove
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Confirm Removal</DialogTitle>
+                          </DialogHeader>
+                          <p>Are you sure you want to remove {game.title}?</p>
+                          <div className="flex justify-end space-x-2">
+                            <DialogClose asChild>
+                              <Button variant="outline">Cancel</Button>
+                            </DialogClose>
+                            <DialogClose asChild>
+                              <Button variant="destructive" onClick={() => handleRemoveGame(game.id)} disabled={isLoading}>
+                                {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                                Confirm Remove
+                              </Button>
+                            </DialogClose>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
                     </div>
                   </>
                 )}
               </li>
             ))}
           </ul>
+          <Pagination
+            className="mt-4"
+            currentPage={currentPage}
+            totalCount={filteredGames.length}
+            pageSize={gamesPerPage}
+            onPageChange={setCurrentPage}
+          />
         </div>
       </div>
     </ErrorBoundary>
