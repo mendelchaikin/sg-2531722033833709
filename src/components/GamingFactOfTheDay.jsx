@@ -12,19 +12,25 @@ export default function GamingFactOfTheDay() {
   const [fact, setFact] = useState('');
 
   useEffect(() => {
-    const today = new Date().toDateString();
-    const storedDate = localStorage.getItem('factDate');
-    const storedFact = localStorage.getItem('dailyFact');
+    const getFact = () => {
+      const today = new Date().toDateString();
+      const storedDate = localStorage.getItem('factDate');
+      const storedFact = localStorage.getItem('dailyFact');
 
-    if (storedDate === today && storedFact) {
-      setFact(storedFact);
-    } else {
-      const randomFact = facts[Math.floor(Math.random() * facts.length)];
-      setFact(randomFact);
-      localStorage.setItem('factDate', today);
-      localStorage.setItem('dailyFact', randomFact);
-    }
+      if (storedDate === today && storedFact) {
+        setFact(storedFact);
+      } else {
+        const randomFact = facts[Math.floor(Math.random() * facts.length)];
+        setFact(randomFact);
+        localStorage.setItem('factDate', today);
+        localStorage.setItem('dailyFact', randomFact);
+      }
+    };
+
+    getFact();
   }, []);
+
+  if (!fact) return null;
 
   return (
     <div className="bg-gray-800 p-4 rounded-lg my-8">

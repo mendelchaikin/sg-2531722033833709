@@ -7,7 +7,7 @@ import { ThemeProvider } from 'next-themes';
 export default function App({ Component, pageProps }) {
   return (
     <ErrorBoundary>
-      <ThemeProvider attribute="class" defaultTheme="dark">
+      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
         <GameProvider>
           <Component {...pageProps} />
           <Toaster />

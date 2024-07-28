@@ -3,7 +3,9 @@ import Image from 'next/image';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import confetti from 'canvas-confetti';
+import dynamic from 'next/dynamic';
+
+const Confetti = dynamic(() => import('canvas-confetti'), { ssr: false });
 
 export default function GameCard({ game }) {
   const [isHovered, setIsHovered] = useState(false);
@@ -14,11 +16,13 @@ export default function GameCard({ game }) {
   const handleImageError = () => setImageError(true);
 
   const handlePlayNow = () => {
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 }
-    });
+    if (typeof window !== 'undefined') {
+      Confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+    }
   };
 
   return (
@@ -39,9 +43,8 @@ export default function GameCard({ game }) {
             <Image
               src={game.image}
               alt={game.title}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover"
+              layout="fill"
+              objectFit="cover"
               onLoad={handleImageLoad}
               onError={handleImageError}
               loading="lazy"
@@ -55,9 +58,8 @@ export default function GameCard({ game }) {
             <Image
               src={game.preview}
               alt={`${game.title} preview`}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover"
+              layout="fill"
+              objectFit="cover"
               onLoad={handleImageLoad}
               onError={handleImageError}
               loading="lazy"

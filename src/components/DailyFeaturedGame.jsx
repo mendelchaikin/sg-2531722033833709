@@ -7,17 +7,23 @@ export default function DailyFeaturedGame() {
   const [dailyGame, setDailyGame] = useState(null);
 
   useEffect(() => {
-    const today = new Date().toDateString();
-    const storedDate = localStorage.getItem('dailyGameDate');
-    const storedGameId = localStorage.getItem('dailyGameId');
+    const selectDailyGame = () => {
+      const today = new Date().toDateString();
+      const storedDate = localStorage.getItem('dailyGameDate');
+      const storedGameId = localStorage.getItem('dailyGameId');
 
-    if (storedDate === today && storedGameId) {
-      setDailyGame(games.find(game => game.id === parseInt(storedGameId)));
-    } else {
-      const randomGame = games[Math.floor(Math.random() * games.length)];
-      setDailyGame(randomGame);
-      localStorage.setItem('dailyGameDate', today);
-      localStorage.setItem('dailyGameId', randomGame.id.toString());
+      if (storedDate === today && storedGameId) {
+        setDailyGame(games.find(game => game.id === parseInt(storedGameId)));
+      } else {
+        const randomGame = games[Math.floor(Math.random() * games.length)];
+        setDailyGame(randomGame);
+        localStorage.setItem('dailyGameDate', today);
+        localStorage.setItem('dailyGameId', randomGame.id.toString());
+      }
+    };
+
+    if (games.length > 0) {
+      selectDailyGame();
     }
   }, [games]);
 
