@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/components/ui/use-toast';
+import { Loader2 } from 'lucide-react';
 
 export default function GameManagement() {
   const { games, addGame, removeGame } = useGameContext();
@@ -16,6 +17,7 @@ export default function GameManagement() {
     isEmbedded: false,
     embeddedUrl: '',
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -26,23 +28,44 @@ export default function GameManagement() {
     setNewGame(prev => ({ ...prev, isEmbedded: e.target.checked }));
   };
 
-  const handleAddGame = (e) => {
+  const handleAddGame = async (e) => {
     e.preventDefault();
     if (newGame.title && newGame.category) {
-      addGame(newGame);
-      setNewGame({
-        title: '',
-        category: '',
-        image: '',
-        preview: '',
-        description: '',
-        isEmbedded: false,
-        embeddedUrl: '',
-      });
-      toast({
-        title: "Game Added",
-        description: `${newGame.title} has been added successfully.`,
-      });
+      setIsLoading(true);
+      try {
+        const response = await fetch('/api/games/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newGame),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          addGame(data.game);
+          setNewGame({
+            title: '',
+            category: '',
+            image: '',
+            preview: '',
+            description: '',
+            isEmbedded: false,
+            embeddedUrl: '',
+          });
+          toast({
+            title: "Game Added",
+            description: `${data.game.title} has been added successfully.`,
+          });
+        } else {
+          throw new Error(data.message || 'Failed to add game');
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
     } else {
       toast({
         title: "Error",
@@ -52,12 +75,33 @@ export default function GameManagement() {
     }
   };
 
-  const handleRemoveGame = (gameId) => {
-    removeGame(gameId);
-    toast({
-      title: "Game Removed",
-      description: "The game has been removed successfully.",
-    });
+  const handleRemoveGame = async (gameId) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/games/remove', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: gameId }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        removeGame(gameId);
+        toast({
+          title: "Game Removed",
+          description: "The game has been removed successfully.",
+        });
+      } else {
+        throw new Error(data.message || 'Failed to remove game');
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -112,7 +156,10 @@ export default function GameManagement() {
             placeholder="Embedded Game URL"
           />
         )}
-        <Button type="submit">Add Game</Button>
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+          Add Game
+        </Button>
       </form>
 
       <div>
@@ -121,7 +168,10 @@ export default function GameManagement() {
           {games.map(game => (
             <li key={game.id} className="flex justify-between items-center">
               <span>{game.title} {game.isEmbedded ? '(Embedded)' : ''}</span>
-              <Button onClick={() => handleRemoveGame(game.id)} variant="destructive">Remove</Button>
+              <Button onClick={() => handleRemoveGame(game.id)} variant="destructive" disabled={isLoading}>
+                {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                Remove
+              </Button>
             </li>
           ))}
         </ul>

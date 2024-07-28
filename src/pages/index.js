@@ -24,7 +24,7 @@ export default function Home() {
 
   const indexOfLastGame = currentPage * gamesPerPage;
   const indexOfFirstGame = indexOfLastGame - gamesPerPage;
-  const currentGames = filteredGames.slice(indexOfFirstGame, indexOfLastGame);
+  const currentGames = filteredGames.filter(game => !game.isEmbedded).slice(indexOfFirstGame, indexOfLastGame);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -91,7 +91,7 @@ export default function Home() {
       )}
       {filteredGames.length > gamesPerPage && (
         <div className="flex justify-center mt-8 space-x-2">
-          {[...Array(Math.ceil(filteredGames.length / gamesPerPage))].map((_, index) => (
+          {[...Array(Math.ceil(filteredGames.filter(game => !game.isEmbedded).length / gamesPerPage))].map((_, index) => (
             <Button
               key={index}
               onClick={() => paginate(index + 1)}
