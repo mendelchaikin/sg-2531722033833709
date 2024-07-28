@@ -7,6 +7,18 @@ import { motion, AnimatePresence } from 'framer-motion';
 export default function GameCard({ game }) {
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
+  const handleImageLoad = (event) => {
+    if (event.target.src.indexOf(game.image) !== -1 || event.target.src.indexOf(game.preview) !== -1) {
+      setImageLoaded(true);
+    }
+  };
+
+  const handleImageError = () => {
+    setImageError(true);
+    setImageLoaded(true);
+  };
 
   return (
     <motion.div
@@ -33,7 +45,9 @@ export default function GameCard({ game }) {
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   className="object-cover"
-                  onLoadingComplete={() => setImageLoaded(true)}
+                  onLoad={handleImageLoad}
+                  onError={handleImageError}
+                  loading="lazy"
                 />
               </motion.div>
             ) : (
@@ -51,18 +65,25 @@ export default function GameCard({ game }) {
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   className="object-cover"
-                  onLoadingComplete={() => setImageLoaded(true)}
+                  onLoad={handleImageLoad}
+                  onError={handleImageError}
+                  loading="lazy"
                 />
               </motion.div>
             )}
           </AnimatePresence>
           {!imageLoaded && (
+            <div className="absolute inset-0 bg-gray-700 animate-pulse flex items-center justify-center">
+              <span className="sr-only">Loading...</span>
+            </div>
+          )}
+          {imageError && (
             <div className="absolute inset-0 bg-gray-700 flex items-center justify-center">
-              <span className="text-gray-500">Loading...</span>
+              <span className="text-gray-500">Image not available</span>
             </div>
           )}
           <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-            <Button className="bg-purple-600 hover:bg-purple-700">Play Now</Button>
+            <Button className="bg-purple-600 hover:bg-purple-700" aria-label={`Play ${game.title}`}>Play Now</Button>
           </div>
         </CardContent>
         <CardFooter className="bg-gray-700 p-4">

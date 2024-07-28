@@ -6,6 +6,18 @@ import { motion, AnimatePresence } from 'framer-motion';
 export default function FeaturedGame({ game }) {
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
+  const handleImageLoad = (event) => {
+    if (event.target.src.indexOf(game.image) !== -1 || event.target.src.indexOf(game.preview) !== -1) {
+      setImageLoaded(true);
+    }
+  };
+
+  const handleImageError = () => {
+    setImageError(true);
+    setImageLoaded(true);
+  };
 
   return (
     <motion.div
@@ -32,7 +44,9 @@ export default function FeaturedGame({ game }) {
               fill
               sizes="100vw"
               className="object-cover brightness-50"
-              onLoadingComplete={() => setImageLoaded(true)}
+              onLoad={handleImageLoad}
+              onError={handleImageError}
+              priority
             />
           </motion.div>
         ) : (
@@ -50,20 +64,27 @@ export default function FeaturedGame({ game }) {
               fill
               sizes="100vw"
               className="object-cover brightness-50"
-              onLoadingComplete={() => setImageLoaded(true)}
+              onLoad={handleImageLoad}
+              onError={handleImageError}
+              priority
             />
           </motion.div>
         )}
       </AnimatePresence>
       {!imageLoaded && (
+        <div className="absolute inset-0 bg-gray-700 animate-pulse flex items-center justify-center">
+          <span className="sr-only">Loading...</span>
+        </div>
+      )}
+      {imageError && (
         <div className="absolute inset-0 bg-gray-700 flex items-center justify-center">
-          <span className="text-gray-500">Loading...</span>
+          <span className="text-gray-500">Image not available</span>
         </div>
       )}
       <div className="absolute inset-0 flex flex-col justify-end p-6 bg-gradient-to-t from-black to-transparent">
         <h2 className="text-4xl font-bold mb-2">{game.title}</h2>
         <p className="text-lg mb-4">{game.description}</p>
-        <Button className="w-40 bg-purple-600 hover:bg-purple-700">Play Now</Button>
+        <Button className="w-40 bg-purple-600 hover:bg-purple-700" aria-label={`Play ${game.title}`}>Play Now</Button>
       </div>
     </motion.div>
   );
