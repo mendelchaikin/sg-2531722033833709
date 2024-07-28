@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Image from 'next/image';
+import Image from 'next/legacy/image';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
@@ -43,12 +43,10 @@ export default function GameCard({ game }) {
             <Image
               src={game.image}
               alt={game.title}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover"
-              onLoad={handleImageLoad}
+              layout="fill"
+              objectFit="cover"
+              onLoadingComplete={handleImageLoad}
               onError={handleImageError}
-              loading="lazy"
             />
           </motion.div>
           <motion.div
@@ -59,12 +57,10 @@ export default function GameCard({ game }) {
             <Image
               src={game.preview}
               alt={`${game.title} preview`}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover"
-              onLoad={handleImageLoad}
+              layout="fill"
+              objectFit="cover"
+              onLoadingComplete={handleImageLoad}
               onError={handleImageError}
-              loading="lazy"
             />
           </motion.div>
           {!imageLoaded && !imageError && (

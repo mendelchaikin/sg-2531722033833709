@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Image from 'next/image';
+import Image from 'next/legacy/image';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -33,10 +33,10 @@ export default function FeaturedGame({ game }) {
             <Image
               src={game.preview}
               alt={`${game.title} preview`}
-              fill
-              sizes="100vw"
-              className="object-cover brightness-50"
-              onLoad={handleImageLoad}
+              layout="fill"
+              objectFit="cover"
+              className="brightness-50"
+              onLoadingComplete={handleImageLoad}
               onError={handleImageError}
               priority
             />
@@ -53,10 +53,10 @@ export default function FeaturedGame({ game }) {
             <Image
               src={game.image}
               alt={game.title}
-              fill
-              sizes="100vw"
-              className="object-cover brightness-50"
-              onLoad={handleImageLoad}
+              layout="fill"
+              objectFit="cover"
+              className="brightness-50"
+              onLoadingComplete={handleImageLoad}
               onError={handleImageError}
               priority
             />
