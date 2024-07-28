@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp, Check, Shuffle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { toast } from '@/components/ui/use-toast';
 
 const backgrounds = [
   { name: 'Default', value: 'default', preview: '🌈', description: 'Simple and clean default background' },
@@ -18,6 +19,20 @@ export default function BackgroundSelector({ currentBackground, onSelectBackgrou
     const randomBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
     onSelectBackground(randomBg.value);
     setIsOpen(false);
+    toast({
+      title: "Background Changed",
+      description: `Background set to ${randomBg.name}`,
+    });
+  };
+
+  const handleBackgroundChange = (bgValue) => {
+    onSelectBackground(bgValue);
+    setIsOpen(false);
+    const selectedBg = backgrounds.find(bg => bg.value === bgValue);
+    toast({
+      title: "Background Changed",
+      description: `Background set to ${selectedBg.name}`,
+    });
   };
 
   return (
@@ -46,10 +61,7 @@ export default function BackgroundSelector({ currentBackground, onSelectBackgrou
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
-                    onClick={() => {
-                      onSelectBackground(bg.value);
-                      setIsOpen(false);
-                    }}
+                    onClick={() => handleBackgroundChange(bg.value)}
                     className="flex items-center justify-between w-full text-left mb-2 last:mb-0"
                     variant="ghost"
                     aria-label={`Select ${bg.name} background`}

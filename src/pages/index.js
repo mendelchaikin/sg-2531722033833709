@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowUp } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from '@/components/ui/use-toast';
 
 export default function Home() {
   const { filteredGames, isLoading, error, filterByCategory, toggleFavorite } = useGameContext();
@@ -49,6 +50,12 @@ export default function Home() {
   const handleFavorite = (gameId) => {
     if (user) {
       toggleFavorite(gameId);
+    } else {
+      toast({
+        title: "Login Required",
+        description: "Please log in to favorite games.",
+        variant: "destructive",
+      });
     }
   };
 
