@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { sampleGames } from '@/data/sampleGames';
+import { toast } from '@/components/ui/use-toast';
 
 const GameContext = createContext();
 
@@ -21,7 +22,11 @@ export function GameProvider({ children }) {
         setFeaturedGame(getRandomGame(sampleGames.filter(game => !game.isEmbedded)));
       } catch (err) {
         setError('Failed to load games');
-        console.error('Error initializing games:', err);
+        toast({
+          title: "Error",
+          description: "Failed to load games. Please try again later.",
+          variant: "destructive",
+        });
       } finally {
         setIsLoading(false);
       }
@@ -46,7 +51,11 @@ export function GameProvider({ children }) {
       setFilteredGames(filtered);
     } catch (err) {
       setError('An error occurred while searching games');
-      console.error('Error searching games:', err);
+      toast({
+        title: "Error",
+        description: "An error occurred while searching games. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -64,7 +73,11 @@ export function GameProvider({ children }) {
       }
     } catch (err) {
       setError('An error occurred while filtering games');
-      console.error('Error filtering games:', err);
+      toast({
+        title: "Error",
+        description: "An error occurred while filtering games. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -108,6 +121,19 @@ export function GameProvider({ children }) {
     );
   }, []);
 
+  const exportGames = useCallback(() => {
+    const gameData = JSON.stringify(games, null, 2);
+    const blob = new Blob([gameData], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'game_data.json';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }, [games]);
+
   const value = {
     games,
     filteredGames,
@@ -119,7 +145,8 @@ export function GameProvider({ children }) {
     toggleFavorite,
     addGame,
     removeGame,
-    updateGame
+    updateGame,
+    exportGames
   };
 
   return (

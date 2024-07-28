@@ -69,6 +69,15 @@ export default function Home() {
         <meta name="keywords" content="online games, gaming, puzzle games, action games, arcade games" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="/favicon.ico" />
+        <meta property="og:title" content="Gaming Site - Play Awesome Games Online" />
+        <meta property="og:description" content="Discover and play the best online games on our gaming site. From action to puzzle, we have games for everyone." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://yourgamingsite.com" />
+        <meta property="og:image" content="https://yourgamingsite.com/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Gaming Site - Play Awesome Games Online" />
+        <meta name="twitter:description" content="Discover and play the best online games on our gaming site. From action to puzzle, we have games for everyone." />
+        <meta name="twitter:image" content="https://yourgamingsite.com/twitter-image.jpg" />
       </Head>
       <Alert className="mb-4">
         <InfoIcon className="h-4 w-4" />

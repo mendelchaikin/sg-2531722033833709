@@ -3,13 +3,15 @@ import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
 import { useAuth } from '@/context/AuthContext';
 import GameManagement from '@/components/GameManagement';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Download } from 'lucide-react';
 import { useGameContext } from '@/context/GameContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export default function AdminPage() {
   const { user, loading } = useAuth();
-  const { games } = useGameContext();
+  const { games, exportGames } = useGameContext();
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState(false);
 
@@ -69,6 +71,15 @@ export default function AdminPage() {
             <p className="text-2xl font-bold">{embeddedGames}</p>
           </CardContent>
         </Card>
+      </div>
+      <div className="flex justify-between items-center mb-6">
+        <Link href="/embedded-games">
+          <Button>View Embedded Games</Button>
+        </Link>
+        <Button onClick={exportGames}>
+          <Download className="mr-2 h-4 w-4" />
+          Export Game Data
+        </Button>
       </div>
       <GameManagement />
     </Layout>
