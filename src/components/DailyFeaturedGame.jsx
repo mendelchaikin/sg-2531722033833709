@@ -36,10 +36,6 @@ export default function DailyFeaturedGame() {
     return <div className="text-red-500">Error loading daily featured game: {error}</div>;
   }
 
-  if (!dailyGame) {
-    return null;
-  }
-
   return (
     <div className="mb-8">
       <h2 className="text-2xl font-bold mb-4">Daily Featured Game</h2>
