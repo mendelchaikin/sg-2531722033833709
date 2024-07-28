@@ -16,7 +16,7 @@ export default function Home() {
   const { user } = useAuth();
   const gamesPerPage = 8;
 
-  const featuredGame = filteredGames[0];
+  const featuredGame = filteredGames.length > 0 ? filteredGames[0] : null;
   const categories = ['All', ...new Set(filteredGames.map(game => game.category))];
 
   const indexOfLastGame = currentPage * gamesPerPage;
@@ -52,6 +52,14 @@ export default function Home() {
     }
   };
 
+  if (isLoading) {
+    return <Layout><div>Loading...</div></Layout>;
+  }
+
+  if (error) {
+    return <Layout><div>Error: {error}</div></Layout>;
+  }
+
   return (
     <Layout>
       <Head>
@@ -61,9 +69,8 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <FeaturedGame game={featuredGame} />
+      {featuredGame && <FeaturedGame game={featuredGame} />}
       <Categories categories={categories} onSelectCategory={filterByCategory} />
-      {error && <p className="text-red-500 text-center my-4">{error}</p>}
       <GameGrid games={currentGames} isLoading={isLoading} onFavorite={handleFavorite} />
       {filteredGames.length > gamesPerPage && (
         <div className="flex justify-center mt-8 space-x-2">

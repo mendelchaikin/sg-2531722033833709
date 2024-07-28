@@ -6,12 +6,24 @@ const GameContext = createContext();
 export function GameProvider({ children }) {
   const [games, setGames] = useState([]);
   const [filteredGames, setFilteredGames] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    setGames(sampleGames);
-    setFilteredGames(sampleGames);
+    const initializeGames = async () => {
+      try {
+        // Simulating an API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setGames(sampleGames);
+        setFilteredGames(sampleGames);
+      } catch (err) {
+        setError('Failed to load games');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initializeGames();
   }, []);
 
   const searchGames = useCallback((query) => {

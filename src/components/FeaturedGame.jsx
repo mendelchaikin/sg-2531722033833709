@@ -11,6 +11,10 @@ export default function FeaturedGame({ game }) {
   const handleImageLoad = () => setImageLoaded(true);
   const handleImageError = () => setImageError(true);
 
+  if (!game) {
+    return null; // or return a placeholder component
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}

@@ -28,6 +28,10 @@ export default function GameCard({ game, onFavorite }) {
     }
   };
 
+  if (!game) {
+    return null; // or return a placeholder component
+  }
+
   return (
     <motion.div
       whileHover={{ scale: 1.05 }}
