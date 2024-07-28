@@ -11,30 +11,18 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 
 // Helper function to sanitize game objects for serialization
 const sanitizeGame = (game) => {
-  const {
-    id,
-    title,
-    category,
-    image,
-    preview,
-    description,
-    averageRating,
-    isFavorite,
-    isEmbedded,
-  } = game;
-
   return {
-    id,
-    title,
-    category,
-    image,
-    preview,
-    description,
-    averageRating: averageRating || 'N/A',
-    isFavorite: !!isFavorite,
-    isEmbedded: !!isEmbedded,
+    id: game.id || 0,
+    title: game.title || '',
+    category: game.category || '',
+    image: game.image || '',
+    preview: game.preview || '',
+    description: game.description || '',
+    averageRating: game.averageRating || 'N/A',
+    isFavorite: !!game.isFavorite,
+    isEmbedded: !!game.isEmbedded,
     ratings: Array.isArray(game.ratings) ? game.ratings.length : 0,
-    userRatings: {},
+    userRatings: game.userRatings || {},
   };
 };
 
@@ -98,11 +86,13 @@ export async function getServerSideProps() {
     ];
     
     const sanitizedGames = initialGames.map(sanitizeGame);
+    console.log("Sanitized games:", JSON.stringify(sanitizedGames, null, 2));
+
     const sanitizedFeaturedGame = sanitizedGames.length > 0 ? sanitizedGames[0] : null;
+    console.log("Sanitized featured game:", JSON.stringify(sanitizedFeaturedGame, null, 2));
 
     console.log("Initial games data fetched and sanitized successfully.");
     console.log("Sanitized games count:", sanitizedGames.length);
-    console.log("Sanitized featured game:", sanitizedFeaturedGame ? sanitizedFeaturedGame.title : "None");
 
     return {
       props: {
