@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 export default function GameCard({ game }) {
   const [isHovered, setIsHovered] = useState(false);
@@ -26,52 +26,42 @@ export default function GameCard({ game }) {
       transition={{ type: "spring", stiffness: 300 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
+      className="h-full"
     >
-      <Card className="overflow-hidden bg-gray-800 hover:shadow-xl transition-all duration-300">
+      <Card className="overflow-hidden bg-gray-800 hover:shadow-xl transition-all duration-300 h-full flex flex-col">
         <CardContent className="p-0 relative aspect-video">
-          <AnimatePresence>
-            {isHovered ? (
-              <motion.div
-                key="preview"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="absolute inset-0"
-              >
-                <Image
-                  src={game.preview}
-                  alt={`${game.title} preview`}
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  className="object-cover"
-                  onLoad={handleImageLoad}
-                  onError={handleImageError}
-                  loading="lazy"
-                />
-              </motion.div>
-            ) : (
-              <motion.div
-                key="image"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="absolute inset-0"
-              >
-                <Image
-                  src={game.image}
-                  alt={game.title}
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  className="object-cover"
-                  onLoad={handleImageLoad}
-                  onError={handleImageError}
-                  loading="lazy"
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <motion.div
+            animate={{ opacity: isHovered ? 0 : 1 }}
+            transition={{ duration: 0.3 }}
+            className="absolute inset-0"
+          >
+            <Image
+              src={game.image}
+              alt={game.title}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover"
+              onLoad={handleImageLoad}
+              onError={handleImageError}
+              loading="lazy"
+            />
+          </motion.div>
+          <motion.div
+            animate={{ opacity: isHovered ? 1 : 0 }}
+            transition={{ duration: 0.3 }}
+            className="absolute inset-0"
+          >
+            <Image
+              src={game.preview}
+              alt={`${game.title} preview`}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover"
+              onLoad={handleImageLoad}
+              onError={handleImageError}
+              loading="lazy"
+            />
+          </motion.div>
           {!imageLoaded && (
             <div className="absolute inset-0 bg-gray-700 animate-pulse flex items-center justify-center">
               <span className="sr-only">Loading...</span>
@@ -86,7 +76,7 @@ export default function GameCard({ game }) {
             <Button className="bg-purple-600 hover:bg-purple-700" aria-label={`Play ${game.title}`}>Play Now</Button>
           </div>
         </CardContent>
-        <CardFooter className="bg-gray-700 p-4">
+        <CardFooter className="bg-gray-700 p-4 mt-auto">
           <div>
             <h3 className="text-lg font-semibold mb-1">{game.title}</h3>
             <p className="text-sm text-gray-400">{game.category}</p>

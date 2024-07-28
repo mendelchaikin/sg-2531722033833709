@@ -1,14 +1,14 @@
 import { useState } from 'react';
+import Head from 'next/head';
 import Layout from '@/components/Layout';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import FeaturedGame from '@/components/FeaturedGame';
 import GameGrid from '@/components/GameGrid';
 import Categories from '@/components/Categories';
 import { useGameContext } from '@/context/GameContext';
+import { Button } from '@/components/ui/button';
 
 export default function Home() {
-  const { filteredGames, searchGames, filterByCategory } = useGameContext();
+  const { filteredGames, isLoading, error, filterByCategory } = useGameContext();
   const [currentPage, setCurrentPage] = useState(1);
   const gamesPerPage = 8;
 
@@ -23,28 +23,29 @@ export default function Home() {
 
   return (
     <Layout>
-      <Header onSearch={searchGames} />
-      <main className="container mx-auto px-4 py-8">
-        <FeaturedGame game={featuredGame} />
-        <Categories categories={categories} onSelectCategory={filterByCategory} />
-        <GameGrid games={currentGames} />
-        {filteredGames.length > gamesPerPage && (
-          <div className="flex justify-center mt-8">
-            {[...Array(Math.ceil(filteredGames.length / gamesPerPage))].map((_, index) => (
-              <button
-                key={index}
-                onClick={() => paginate(index + 1)}
-                className={`mx-1 px-3 py-1 rounded ${
-                  currentPage === index + 1 ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-700'
-                }`}
-              >
-                {index + 1}
-              </button>
-            ))}
-          </div>
-        )}
-      </main>
-      <Footer />
+      <Head>
+        <title>Gaming Site - Play Awesome Games Online</title>
+        <meta name="description" content="Discover and play the best online games on our gaming site. From action to puzzle, we have games for everyone." />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <FeaturedGame game={featuredGame} />
+      <Categories categories={categories} onSelectCategory={filterByCategory} />
+      {error && <p className="text-red-500 text-center my-4">{error}</p>}
+      <GameGrid games={currentGames} isLoading={isLoading} />
+      {filteredGames.length > gamesPerPage && (
+        <div className="flex justify-center mt-8 space-x-2">
+          {[...Array(Math.ceil(filteredGames.length / gamesPerPage))].map((_, index) => (
+            <Button
+              key={index}
+              onClick={() => paginate(index + 1)}
+              variant={currentPage === index + 1 ? "default" : "outline"}
+              className={currentPage === index + 1 ? "bg-purple-600" : ""}
+            >
+              {index + 1}
+            </Button>
+          ))}
+        </div>
+      )}
     </Layout>
   );
 }
