@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import confetti from 'canvas-confetti';
 
 export default function GameCard({ game }) {
   const [isHovered, setIsHovered] = useState(false);
@@ -11,6 +12,14 @@ export default function GameCard({ game }) {
 
   const handleImageLoad = () => setImageLoaded(true);
   const handleImageError = () => setImageError(true);
+
+  const handlePlayNow = () => {
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
+  };
 
   return (
     <motion.div
@@ -65,7 +74,13 @@ export default function GameCard({ game }) {
             </div>
           )}
           <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-            <Button className="bg-purple-600 hover:bg-purple-700" aria-label={`Play ${game.title}`}>Play Now</Button>
+            <Button 
+              className="bg-purple-600 hover:bg-purple-700" 
+              aria-label={`Play ${game.title}`}
+              onClick={handlePlayNow}
+            >
+              Play Now
+            </Button>
           </div>
         </CardContent>
         <CardFooter className="bg-gray-700 p-4 mt-auto">
