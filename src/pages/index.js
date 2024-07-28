@@ -7,6 +7,36 @@ import Categories from '@/components/Categories';
 import RandomGameRecommendation from '@/components/RandomGameRecommendation';
 import GamingFactOfTheDay from '@/components/GamingFactOfTheDay';
 import { useGameContext } from '@/context/GameContext';
+import ErrorBoundary from '@/components/ErrorBoundary';
+
+// Helper function to sanitize game objects for serialization
+const sanitizeGame = (game) => {
+  const {
+    id,
+    title,
+    category,
+    image,
+    preview,
+    description,
+    averageRating,
+    isFavorite,
+    isEmbedded,
+  } = game;
+
+  return {
+    id,
+    title,
+    category,
+    image,
+    preview,
+    description,
+    averageRating: averageRating || 'N/A',
+    isFavorite: !!isFavorite,
+    isEmbedded: !!isEmbedded,
+    ratings: Array.isArray(game.ratings) ? game.ratings.length : 0,
+    userRatings: {},
+  };
+};
 
 export default function Home({ initialGames, initialFeaturedGame }) {
   const { games, featuredGame, filterByCategory, setGames, setFeaturedGame } = useGameContext();
@@ -22,23 +52,17 @@ export default function Home({ initialGames, initialFeaturedGame }) {
 
   const categories = [...new Set((games || []).map(game => game.category))];
 
-  if (!games || games.length === 0) {
-    return (
-      <Layout>
-        <div>No games available at the moment. Please check back later.</div>
-      </Layout>
-    );
-  }
-
   return (
-    <Layout>
-      <WelcomeSection />
-      {featuredGame && <FeaturedGame game={featuredGame} />}
-      <PopularGames games={games} />
-      <Categories categories={categories} onSelectCategory={filterByCategory} />
-      <RandomGameRecommendation />
-      <GamingFactOfTheDay />
-    </Layout>
+    <ErrorBoundary>
+      <Layout>
+        <WelcomeSection />
+        {featuredGame && <FeaturedGame game={featuredGame} />}
+        <PopularGames games={games} />
+        <Categories categories={categories} onSelectCategory={filterByCategory} />
+        <RandomGameRecommendation />
+        <GamingFactOfTheDay />
+      </Layout>
+    </ErrorBoundary>
   );
 }
 
@@ -73,24 +97,17 @@ export async function getServerSideProps() {
       }
     ];
     
-    const initialFeaturedGame = initialGames.length > 0 ? { ...initialGames[0] } : null;
+    const sanitizedGames = initialGames.map(sanitizeGame);
+    const sanitizedFeaturedGame = sanitizedGames.length > 0 ? sanitizedGames[0] : null;
 
-    console.log("Initial games data fetched successfully.");
-    console.log("Initial games count:", initialGames.length);
-    console.log("Initial featured game:", initialFeaturedGame ? initialFeaturedGame.title : "None");
+    console.log("Initial games data fetched and sanitized successfully.");
+    console.log("Sanitized games count:", sanitizedGames.length);
+    console.log("Sanitized featured game:", sanitizedFeaturedGame ? sanitizedFeaturedGame.title : "None");
 
     return {
       props: {
-        initialGames: initialGames.map(game => ({
-          ...game,
-          ratings: game.ratings.length, // Only send the count of ratings
-          userRatings: {}, // Empty object for user ratings
-        })),
-        initialFeaturedGame: initialFeaturedGame ? {
-          ...initialFeaturedGame,
-          ratings: initialFeaturedGame.ratings.length,
-          userRatings: {},
-        } : null,
+        initialGames: sanitizedGames,
+        initialFeaturedGame: sanitizedFeaturedGame,
       },
     };
   } catch (error) {
