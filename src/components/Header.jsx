@@ -6,15 +6,17 @@ import { Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 import LoginModal from './LoginModal';
 import { useAuth } from '@/context/AuthContext';
+import { useGameContext } from '@/context/GameContext';
 
-export default function Header({ onSearch }) {
+export default function Header() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const { user, logout } = useAuth();
+  const { searchGames } = useGameContext();
 
   const handleSearch = (e) => {
     e.preventDefault();
-    onSearch(searchQuery);
+    searchGames(searchQuery);
   };
 
   return (

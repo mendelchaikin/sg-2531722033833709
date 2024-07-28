@@ -1,21 +1,22 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Layout from '@/components/Layout';
-import DailyFeaturedGame from '@/components/DailyFeaturedGame';
+import FeaturedGame from '@/components/FeaturedGame';
 import GameGrid from '@/components/GameGrid';
 import Categories from '@/components/Categories';
-import RandomGameRecommendation from '@/components/RandomGameRecommendation';
-import GamingFactOfTheDay from '@/components/GamingFactOfTheDay';
 import { useGameContext } from '@/context/GameContext';
 import { Button } from '@/components/ui/button';
 import { ArrowUp } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Home() {
-  const { filteredGames, isLoading, error, filterByCategory } = useGameContext();
+  const { filteredGames, isLoading, error, filterByCategory, toggleFavorite } = useGameContext();
   const [currentPage, setCurrentPage] = useState(1);
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const { user } = useAuth();
   const gamesPerPage = 8;
 
+  const featuredGame = filteredGames[0];
   const categories = ['All', ...new Set(filteredGames.map(game => game.category))];
 
   const indexOfLastGame = currentPage * gamesPerPage;
@@ -45,6 +46,12 @@ export default function Home() {
     });
   };
 
+  const handleFavorite = (gameId) => {
+    if (user) {
+      toggleFavorite(gameId);
+    }
+  };
+
   return (
     <Layout>
       <Head>
@@ -54,10 +61,10 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <DailyFeaturedGame />
+      <FeaturedGame game={featuredGame} />
       <Categories categories={categories} onSelectCategory={filterByCategory} />
       {error && <p className="text-red-500 text-center my-4">{error}</p>}
-      <GameGrid games={currentGames} isLoading={isLoading} />
+      <GameGrid games={currentGames} isLoading={isLoading} onFavorite={handleFavorite} />
       {filteredGames.length > gamesPerPage && (
         <div className="flex justify-center mt-8 space-x-2">
           {[...Array(Math.ceil(filteredGames.length / gamesPerPage))].map((_, index) => (
@@ -72,8 +79,6 @@ export default function Home() {
           ))}
         </div>
       )}
-      <RandomGameRecommendation />
-      <GamingFactOfTheDay />
       {showBackToTop && (
         <Button
           className="fixed bottom-8 right-8 bg-purple-600 hover:bg-purple-700 rounded-full p-3"

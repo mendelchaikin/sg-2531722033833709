@@ -3,14 +3,17 @@ import Image from 'next/image';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import { Heart } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 import dynamic from 'next/dynamic';
 
 const Confetti = dynamic(() => import('canvas-confetti'), { ssr: false });
 
-export default function GameCard({ game }) {
+export default function GameCard({ game, onFavorite }) {
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const { user } = useAuth();
 
   const handleImageLoad = () => setImageLoaded(true);
   const handleImageError = () => setImageError(true);
@@ -46,7 +49,7 @@ export default function GameCard({ game }) {
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover"
-              onLoadingComplete={handleImageLoad}
+              onLoad={handleImageLoad}
               onError={handleImageError}
             />
           </motion.div>
@@ -61,7 +64,7 @@ export default function GameCard({ game }) {
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover"
-              onLoadingComplete={handleImageLoad}
+              onLoad={handleImageLoad}
               onError={handleImageError}
             />
           </motion.div>
@@ -85,11 +88,21 @@ export default function GameCard({ game }) {
             </Button>
           </div>
         </CardContent>
-        <CardFooter className="bg-gray-700 p-4 mt-auto">
+        <CardFooter className="bg-gray-700 p-4 mt-auto flex justify-between items-center">
           <div>
             <h3 className="text-lg font-semibold mb-1">{game.title}</h3>
             <p className="text-sm text-gray-400">{game.category}</p>
           </div>
+          {user && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onFavorite(game.id)}
+              aria-label={`Favorite ${game.title}`}
+            >
+              <Heart className={game.isFavorite ? "text-red-500" : "text-gray-400"} />
+            </Button>
+          )}
         </CardFooter>
       </Card>
     </motion.div>

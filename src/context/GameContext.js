@@ -1,13 +1,18 @@
-import { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { sampleGames } from '@/data/sampleGames';
 
 const GameContext = createContext();
 
 export function GameProvider({ children }) {
-  const [games, setGames] = useState(sampleGames);
-  const [filteredGames, setFilteredGames] = useState(sampleGames);
+  const [games, setGames] = useState([]);
+  const [filteredGames, setFilteredGames] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    setGames(sampleGames);
+    setFilteredGames(sampleGames);
+  }, []);
 
   const searchGames = useCallback((query) => {
     setIsLoading(true);
@@ -42,8 +47,21 @@ export function GameProvider({ children }) {
     }
   }, [games]);
 
+  const toggleFavorite = useCallback((gameId) => {
+    setGames(prevGames => 
+      prevGames.map(game => 
+        game.id === gameId ? { ...game, isFavorite: !game.isFavorite } : game
+      )
+    );
+    setFilteredGames(prevGames => 
+      prevGames.map(game => 
+        game.id === gameId ? { ...game, isFavorite: !game.isFavorite } : game
+      )
+    );
+  }, []);
+
   return (
-    <GameContext.Provider value={{ games, filteredGames, isLoading, error, searchGames, filterByCategory }}>
+    <GameContext.Provider value={{ games, filteredGames, isLoading, error, searchGames, filterByCategory, toggleFavorite }}>
       {children}
     </GameContext.Provider>
   );

@@ -36,7 +36,7 @@ export default function FeaturedGame({ game }) {
               fill
               sizes="100vw"
               className="object-cover brightness-50"
-              onLoadingComplete={handleImageLoad}
+              onLoad={handleImageLoad}
               onError={handleImageError}
               priority
             />
@@ -56,7 +56,7 @@ export default function FeaturedGame({ game }) {
               fill
               sizes="100vw"
               className="object-cover brightness-50"
-              onLoadingComplete={handleImageLoad}
+              onLoad={handleImageLoad}
               onError={handleImageError}
               priority
             />
