@@ -46,6 +46,9 @@ export default function Header() {
             <li><Link href="/categories" className="hover:text-purple-500 transition-colors">Categories</Link></li>
             <li><Link href="/new" className="hover:text-purple-500 transition-colors">New Games</Link></li>
             {user && <li><Link href="/profile" className="hover:text-purple-500 transition-colors">Profile</Link></li>}
+            {user && user.role === 'admin' && (
+              <li><Link href="/admin" className="hover:text-purple-500 transition-colors">Admin</Link></li>
+            )}
           </ul>
         </nav>
         {user ? (

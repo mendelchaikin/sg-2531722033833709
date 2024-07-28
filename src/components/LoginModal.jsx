@@ -5,6 +5,7 @@ import * as z from 'zod';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -15,6 +16,7 @@ const loginSchema = z.object({
 
 const signupSchema = loginSchema.extend({
   name: z.string().min(2, { message: "Name must be at least 2 characters long" }),
+  role: z.enum(['user', 'admin']),
 });
 
 export default function LoginModal({ isOpen, onClose }) {
@@ -22,7 +24,7 @@ export default function LoginModal({ isOpen, onClose }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const { login, signup } = useAuth();
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors }, setValue } = useForm({
     resolver: zodResolver(isLogin ? loginSchema : signupSchema),
   });
 
@@ -33,7 +35,7 @@ export default function LoginModal({ isOpen, onClose }) {
       if (isLogin) {
         await login(data.email, data.password);
       } else {
-        await signup(data.name, data.email, data.password);
+        await signup(data.name, data.email, data.password, data.role);
       }
       onClose();
     } catch (err) {
@@ -75,6 +77,20 @@ export default function LoginModal({ isOpen, onClose }) {
                 <Input {...register('password')} type="password" placeholder="Password" />
                 {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
               </div>
+              {!isLogin && (
+                <div>
+                  <Select onValueChange={(value) => setValue('role', value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="user">User</SelectItem>
+                      <SelectItem value="admin">Admin</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {errors.role && <p className="text-red-500 text-sm">{errors.role.message}</p>}
+                </div>
+              )}
               {error && <p className="text-red-500 text-sm">{error}</p>}
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? 'Loading...' : (isLogin ? 'Login' : 'Sign Up')}
