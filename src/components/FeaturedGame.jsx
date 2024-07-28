@@ -38,10 +38,10 @@ export default function FeaturedGame({ game }) {
             <Image
               src={game.preview || '/placeholder-image.jpg'}
               alt={`${game.title} preview`}
-              fill
-              sizes="100vw"
-              className="object-cover brightness-50"
-              onLoad={handleImageLoad}
+              layout="fill"
+              objectFit="cover"
+              className="brightness-50"
+              onLoadingComplete={handleImageLoad}
               onError={handleImageError}
               priority
             />
@@ -58,10 +58,10 @@ export default function FeaturedGame({ game }) {
             <Image
               src={game.image || '/placeholder-image.jpg'}
               alt={game.title || 'Game image'}
-              fill
-              sizes="100vw"
-              className="object-cover brightness-50"
-              onLoad={handleImageLoad}
+              layout="fill"
+              objectFit="cover"
+              className="brightness-50"
+              onLoadingComplete={handleImageLoad}
               onError={handleImageError}
               priority
             />

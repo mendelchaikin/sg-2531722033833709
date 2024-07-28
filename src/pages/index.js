@@ -1,4 +1,4 @@
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Layout from '@/components/Layout';
 import DailyFeaturedGame from '@/components/DailyFeaturedGame';
@@ -61,9 +61,11 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Suspense fallback={<Skeleton className="h-96 w-full mb-8" />}>
+      {isLoading ? (
+        <Skeleton className="h-96 w-full mb-8" />
+      ) : (
         <DailyFeaturedGame />
-      </Suspense>
+      )}
       <Categories categories={categories} onSelectCategory={filterByCategory} />
       {error && <p className="text-red-500 text-center my-4">{error}</p>}
       <GameGrid games={currentGames} isLoading={isLoading} onFavorite={handleFavorite} />
