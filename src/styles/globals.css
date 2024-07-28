@@ -129,5 +129,11 @@
 
 /* Smooth background transition */
 .bg-transition {
-  transition: background-image 0.5s ease-in-out;
+  transition: background 0.5s ease-in-out;
+}
+
+/* Accessibility focus styles */
+.focus-visible:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }

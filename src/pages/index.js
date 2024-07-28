@@ -10,6 +10,8 @@ import { ArrowUp } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/components/ui/use-toast';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { InfoIcon } from 'lucide-react';
 
 export default function Home() {
   const { filteredGames, isLoading, error, filterByCategory, toggleFavorite } = useGameContext();
@@ -68,6 +70,13 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <Alert className="mb-4">
+        <InfoIcon className="h-4 w-4" />
+        <AlertTitle>New Feature!</AlertTitle>
+        <AlertDescription>
+          You can now change the background of the site. Look for the "Change Background" button at the bottom right corner.
+        </AlertDescription>
+      </Alert>
       <DailyFeaturedGame />
       <Categories categories={categories} onSelectCategory={filterByCategory} />
       {error && <p className="text-red-500 text-center my-4">{error}</p>}

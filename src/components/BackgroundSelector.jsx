@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp, Check, Shuffle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -15,24 +15,42 @@ const backgrounds = [
 export default function BackgroundSelector({ currentBackground, onSelectBackground }) {
   const [isOpen, setIsOpen] = useState(false);
 
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   const handleRandomBackground = () => {
     const randomBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
-    onSelectBackground(randomBg.value);
-    setIsOpen(false);
-    toast({
-      title: "Background Changed",
-      description: `Background set to ${randomBg.name}`,
-    });
+    changeBackground(randomBg.value);
   };
 
-  const handleBackgroundChange = (bgValue) => {
-    onSelectBackground(bgValue);
-    setIsOpen(false);
-    const selectedBg = backgrounds.find(bg => bg.value === bgValue);
-    toast({
-      title: "Background Changed",
-      description: `Background set to ${selectedBg.name}`,
-    });
+  const changeBackground = (bgValue) => {
+    try {
+      onSelectBackground(bgValue);
+      setIsOpen(false);
+      const selectedBg = backgrounds.find(bg => bg.value === bgValue);
+      toast({
+        title: "Background Changed",
+        description: `Background set to ${selectedBg.name}`,
+      });
+    } catch (error) {
+      console.error('Error changing background:', error);
+      toast({
+        title: "Error",
+        description: "Failed to change background. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -44,6 +62,7 @@ export default function BackgroundSelector({ currentBackground, onSelectBackgrou
               onClick={() => setIsOpen(!isOpen)}
               className="bg-purple-600 hover:bg-purple-700 text-white"
               aria-label="Change background"
+              aria-expanded={isOpen}
             >
               {isOpen ? <ChevronDown className="mr-2" /> : <ChevronUp className="mr-2" />}
               Change Background
@@ -55,16 +74,17 @@ export default function BackgroundSelector({ currentBackground, onSelectBackgrou
         </Tooltip>
       </TooltipProvider>
       {isOpen && (
-        <div className="mt-2 p-2 bg-gray-800 rounded-lg shadow-lg max-h-60 overflow-y-auto animate-fadeIn">
+        <div className="mt-2 p-2 bg-gray-800 rounded-lg shadow-lg max-h-60 overflow-y-auto animate-fadeIn" role="menu">
           {backgrounds.map((bg) => (
             <TooltipProvider key={bg.value}>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
-                    onClick={() => handleBackgroundChange(bg.value)}
+                    onClick={() => changeBackground(bg.value)}
                     className="flex items-center justify-between w-full text-left mb-2 last:mb-0"
                     variant="ghost"
                     aria-label={`Select ${bg.name} background`}
+                    role="menuitem"
                   >
                     <span>{bg.preview} {bg.name}</span>
                     {currentBackground === bg.value && <Check size={16} />}
@@ -81,6 +101,7 @@ export default function BackgroundSelector({ currentBackground, onSelectBackgrou
             className="flex items-center justify-between w-full text-left mt-2"
             variant="ghost"
             aria-label="Select random background"
+            role="menuitem"
           >
             <span><Shuffle className="mr-2" /> Random</span>
           </Button>
