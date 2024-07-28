@@ -43,8 +43,9 @@ export default function GameCard({ game }) {
             <Image
               src={game.image}
               alt={game.title}
-              layout="fill"
-              objectFit="cover"
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover"
               onLoad={handleImageLoad}
               onError={handleImageError}
               loading="lazy"
@@ -58,8 +59,9 @@ export default function GameCard({ game }) {
             <Image
               src={game.preview}
               alt={`${game.title} preview`}
-              layout="fill"
-              objectFit="cover"
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover"
               onLoad={handleImageLoad}
               onError={handleImageError}
               loading="lazy"
