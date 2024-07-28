@@ -15,6 +15,7 @@ const backgrounds = [
 export default function BackgroundSelector({ currentBackground, onSelectBackground }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isChanging, setIsChanging] = useState(false);
+  const [previewBackground, setPreviewBackground] = useState(null);
 
   const handleRandomBackground = () => {
     const randomBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
@@ -86,6 +87,8 @@ export default function BackgroundSelector({ currentBackground, onSelectBackgrou
                 <TooltipTrigger asChild>
                   <Button
                     onClick={() => changeBackground(bg.value)}
+                    onMouseEnter={() => setPreviewBackground(bg.value)}
+                    onMouseLeave={() => setPreviewBackground(null)}
                     className={`flex items-center justify-between w-full text-left mb-2 last:mb-0 ${currentBackground === bg.value ? 'bg-purple-600' : ''}`}
                     variant="ghost"
                     aria-label={`Select ${bg.name} background`}
@@ -111,6 +114,9 @@ export default function BackgroundSelector({ currentBackground, onSelectBackgrou
             <span><Shuffle className="mr-2" /> Random</span>
           </Button>
         </div>
+      )}
+      {previewBackground && (
+        <div className={`fixed inset-0 bg-${previewBackground} opacity-50 pointer-events-none transition-opacity duration-300`} />
       )}
     </div>
   );

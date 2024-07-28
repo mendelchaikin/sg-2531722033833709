@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import Header from './Header';
 import Footer from './Footer';
 import { useGameContext } from '@/context/GameContext';
@@ -9,6 +10,7 @@ export default function Layout({ children }) {
   const { searchGames } = useGameContext();
   const [background, setBackground] = useState('default');
   const [isChangingBackground, setIsChangingBackground] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const savedBackground = localStorage.getItem('selectedBackground');
@@ -17,12 +19,24 @@ export default function Layout({ children }) {
     }
   }, []);
 
+  useEffect(() => {
+    const handleRouteChange = () => {
+      setIsChangingBackground(true);
+      setTimeout(() => setIsChangingBackground(false), 300);
+    };
+
+    router.events.on('routeChangeStart', handleRouteChange);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  }, [router]);
+
   const handleBackgroundChange = (newBackground) => {
     return new Promise((resolve) => {
       setIsChangingBackground(true);
       setBackground(newBackground);
       localStorage.setItem('selectedBackground', newBackground);
-      // Simulate a delay to show transition effect
       setTimeout(() => {
         setIsChangingBackground(false);
         resolve();
