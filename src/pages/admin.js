@@ -3,18 +3,34 @@ import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
 import { useAuth } from '@/context/AuthContext';
 import GameManagement from '@/components/GameManagement';
+import { Loader2 } from 'lucide-react';
 
 export default function AdminPage() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
+  const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
-    if (!user || user.role !== 'admin') {
-      router.push('/');
+    if (!loading) {
+      if (!user || user.role !== 'admin') {
+        router.push('/');
+      } else {
+        setIsAuthorized(true);
+      }
     }
-  }, [user, router]);
+  }, [user, loading, router]);
 
-  if (!user || user.role !== 'admin') {
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex justify-center items-center h-screen">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!isAuthorized) {
     return null;
   }
 
