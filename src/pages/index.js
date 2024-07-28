@@ -10,13 +10,12 @@ import { ArrowUp } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 export default function Home() {
-  const { filteredGames, isLoading, error, filterByCategory, toggleFavorite } = useGameContext();
+  const { filteredGames, featuredGame, isLoading, error, filterByCategory, toggleFavorite } = useGameContext();
   const [currentPage, setCurrentPage] = useState(1);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const { user } = useAuth();
   const gamesPerPage = 8;
 
-  const featuredGame = filteredGames.length > 0 ? filteredGames[0] : null;
   const categories = ['All', ...new Set(filteredGames.map(game => game.category))];
 
   const indexOfLastGame = currentPage * gamesPerPage;
@@ -69,7 +68,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {featuredGame && <FeaturedGame game={featuredGame} />}
+      <FeaturedGame game={featuredGame} />
       <Categories categories={categories} onSelectCategory={filterByCategory} />
       <GameGrid games={currentGames} isLoading={isLoading} onFavorite={handleFavorite} />
       {filteredGames.length > gamesPerPage && (

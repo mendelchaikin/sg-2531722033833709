@@ -6,6 +6,7 @@ const GameContext = createContext();
 export function GameProvider({ children }) {
   const [games, setGames] = useState([]);
   const [filteredGames, setFilteredGames] = useState([]);
+  const [featuredGame, setFeaturedGame] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -16,6 +17,7 @@ export function GameProvider({ children }) {
         await new Promise(resolve => setTimeout(resolve, 1000));
         setGames(sampleGames);
         setFilteredGames(sampleGames);
+        setFeaturedGame(sampleGames[0]);
       } catch (err) {
         setError('Failed to load games');
       } finally {
@@ -73,7 +75,7 @@ export function GameProvider({ children }) {
   }, []);
 
   return (
-    <GameContext.Provider value={{ games, filteredGames, isLoading, error, searchGames, filterByCategory, toggleFavorite }}>
+    <GameContext.Provider value={{ games, filteredGames, featuredGame, isLoading, error, searchGames, filterByCategory, toggleFavorite }}>
       {children}
     </GameContext.Provider>
   );

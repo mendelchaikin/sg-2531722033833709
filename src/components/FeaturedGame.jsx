@@ -12,7 +12,11 @@ export default function FeaturedGame({ game }) {
   const handleImageError = () => setImageError(true);
 
   if (!game) {
-    return null; // or return a placeholder component
+    return (
+      <div className="relative aspect-video rounded-lg overflow-hidden mb-8 bg-gray-800 flex items-center justify-center">
+        <p className="text-2xl text-gray-400">Featured Game Loading...</p>
+      </div>
+    );
   }
 
   return (
