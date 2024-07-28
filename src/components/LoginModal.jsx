@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/context/AuthContext';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -18,50 +19,73 @@ const signupSchema = loginSchema.extend({
 
 export default function LoginModal({ isOpen, onClose }) {
   const [isLogin, setIsLogin] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const { login, signup } = useAuth();
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(isLogin ? loginSchema : signupSchema),
   });
 
   const onSubmit = async (data) => {
-    if (isLogin) {
-      await login(data.email, data.password);
-    } else {
-      await signup(data.name, data.email, data.password);
+    setIsLoading(true);
+    setError('');
+    try {
+      if (isLogin) {
+        await login(data.email, data.password);
+      } else {
+        await signup(data.name, data.email, data.password);
+      }
+      onClose();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
     }
-    onClose();
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>{isLogin ? 'Login' : 'Sign Up'}</DialogTitle>
-          <DialogDescription>
-            {isLogin ? 'Enter your credentials to login' : 'Create a new account'}
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {!isLogin && (
-            <div>
-              <Input {...register('name')} placeholder="Name" />
-              {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
-            </div>
-          )}
-          <div>
-            <Input {...register('email')} placeholder="Email" />
-            {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
-          </div>
-          <div>
-            <Input {...register('password')} type="password" placeholder="Password" />
-            {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
-          </div>
-          <Button type="submit" className="w-full">{isLogin ? 'Login' : 'Sign Up'}</Button>
-        </form>
-        <Button variant="link" onClick={() => setIsLogin(!isLogin)} className="w-full mt-2">
-          {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Login"}
-        </Button>
-      </DialogContent>
-    </Dialog>
+    <AnimatePresence>
+      {isOpen && (
+        <Dialog open={isOpen} onOpenChange={onClose}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>{isLogin ? 'Login' : 'Sign Up'}</DialogTitle>
+              <DialogDescription>
+                {isLogin ? 'Enter your credentials to login' : 'Create a new account'}
+              </DialogDescription>
+            </DialogHeader>
+            <motion.form
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              onSubmit={handleSubmit(onSubmit)}
+              className="space-y-4"
+            >
+              {!isLogin && (
+                <div>
+                  <Input {...register('name')} placeholder="Name" />
+                  {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+                </div>
+              )}
+              <div>
+                <Input {...register('email')} placeholder="Email" />
+                {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+              </div>
+              <div>
+                <Input {...register('password')} type="password" placeholder="Password" />
+                {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+              </div>
+              {error && <p className="text-red-500 text-sm">{error}</p>}
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? 'Loading...' : (isLogin ? 'Login' : 'Sign Up')}
+              </Button>
+            </motion.form>
+            <Button variant="link" onClick={() => setIsLogin(!isLogin)} className="w-full mt-2">
+              {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Login"}
+            </Button>
+          </DialogContent>
+        </Dialog>
+      )}
+    </AnimatePresence>
   );
 }

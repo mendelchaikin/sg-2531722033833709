@@ -43,6 +43,7 @@ export default function Header({ onSearch }) {
             <li><Link href="/" className="hover:text-purple-500 transition-colors">Home</Link></li>
             <li><Link href="/categories" className="hover:text-purple-500 transition-colors">Categories</Link></li>
             <li><Link href="/new" className="hover:text-purple-500 transition-colors">New Games</Link></li>
+            {user && <li><Link href="/profile" className="hover:text-purple-500 transition-colors">Profile</Link></li>}
           </ul>
         </nav>
         {user ? (
