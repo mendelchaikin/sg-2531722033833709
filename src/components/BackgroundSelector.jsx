@@ -4,6 +4,7 @@ import { ChevronDown, ChevronUp, Check, Shuffle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from '@/components/ui/use-toast';
 
+// Define background options
 const backgrounds = [
   { name: 'Default', value: 'default', preview: '🌈', description: 'Simple and clean default background' },
   { name: 'Starry Night', value: 'starry-night', preview: '🌠', description: 'A twinkling night sky' },
@@ -17,11 +18,13 @@ export default function BackgroundSelector({ currentBackground, onSelectBackgrou
   const [isChanging, setIsChanging] = useState(false);
   const [previewBackground, setPreviewBackground] = useState(null);
 
+  // Handle random background selection
   const handleRandomBackground = () => {
     const randomBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
     changeBackground(randomBg.value);
   };
 
+  // Change background function
   const changeBackground = async (bgValue) => {
     if (bgValue === currentBackground) {
       toast({
@@ -65,11 +68,11 @@ export default function BackgroundSelector({ currentBackground, onSelectBackgrou
               disabled={isChanging}
             >
               {isChanging ? (
-                <span className="animate-spin mr-2">⌛</span>
+                <span className="animate-spin mr-2" aria-hidden="true">⌛</span>
               ) : isOpen ? (
-                <ChevronDown className="mr-2" />
+                <ChevronDown className="mr-2" aria-hidden="true" />
               ) : (
-                <ChevronUp className="mr-2" />
+                <ChevronUp className="mr-2" aria-hidden="true" />
               )}
               Change Background
             </Button>
@@ -95,7 +98,7 @@ export default function BackgroundSelector({ currentBackground, onSelectBackgrou
                     role="menuitem"
                   >
                     <span>{bg.preview} {bg.name}</span>
-                    {currentBackground === bg.value && <Check size={16} />}
+                    {currentBackground === bg.value && <Check size={16} aria-hidden="true" />}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -111,12 +114,16 @@ export default function BackgroundSelector({ currentBackground, onSelectBackgrou
             aria-label="Select random background"
             role="menuitem"
           >
-            <span><Shuffle className="mr-2" /> Random</span>
+            <span><Shuffle className="mr-2" aria-hidden="true" /> Random</span>
           </Button>
         </div>
       )}
       {previewBackground && (
-        <div className={`fixed inset-0 bg-${previewBackground} opacity-50 pointer-events-none transition-opacity duration-300`} />
+        <div 
+          className={`fixed inset-0 bg-${previewBackground} opacity-50 pointer-events-none transition-opacity duration-300`} 
+          aria-hidden="true"
+          data-testid="background-preview"
+        />
       )}
     </div>
   );

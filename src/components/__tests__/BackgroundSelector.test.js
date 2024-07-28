@@ -1,11 +1,10 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import React from 'react';
+import { render, fireEvent, screen } from '@testing-library/react';
 import BackgroundSelector from '../BackgroundSelector';
 
-jest.mock('@/components/ui/tooltip', () => ({
-  Tooltip: ({ children }) => children,
-  TooltipContent: ({ children }) => children,
-  TooltipProvider: ({ children }) => children,
-  TooltipTrigger: ({ children }) => children,
+// Mock the toast function
+jest.mock('@/components/ui/use-toast', () => ({
+  toast: jest.fn(),
 }));
 
 describe('BackgroundSelector', () => {
@@ -44,5 +43,18 @@ describe('BackgroundSelector', () => {
     fireEvent.click(screen.getByText('Change Background'));
     fireEvent.click(screen.getByText('Random'));
     expect(mockOnSelectBackground).toHaveBeenCalled();
+  });
+
+  test('shows preview when hovering over a background option', () => {
+    fireEvent.click(screen.getByText('Change Background'));
+    fireEvent.mouseEnter(screen.getByText('Starry Night'));
+    expect(screen.getByTestId('background-preview')).toHaveClass('bg-starry-night');
+  });
+
+  test('hides preview when mouse leaves a background option', () => {
+    fireEvent.click(screen.getByText('Change Background'));
+    fireEvent.mouseEnter(screen.getByText('Starry Night'));
+    fireEvent.mouseLeave(screen.getByText('Starry Night'));
+    expect(screen.queryByTestId('background-preview')).not.toBeInTheDocument();
   });
 });

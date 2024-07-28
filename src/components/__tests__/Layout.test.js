@@ -8,6 +8,14 @@ jest.mock('../Header', () => () => <div data-testid="header">Header</div>);
 jest.mock('../Footer', () => () => <div data-testid="footer">Footer</div>);
 jest.mock('../ThemeToggle', () => () => <div data-testid="theme-toggle">ThemeToggle</div>);
 jest.mock('../BackgroundSelector', () => () => <div data-testid="background-selector">BackgroundSelector</div>);
+jest.mock('next/router', () => ({
+  useRouter: () => ({
+    events: {
+      on: jest.fn(),
+      off: jest.fn(),
+    },
+  }),
+}));
 
 describe('Layout', () => {
   beforeEach(() => {
@@ -63,5 +71,27 @@ describe('Layout', () => {
 
     expect(container.firstChild).toHaveClass('bg-starry-night');
     expect(localStorage.setItem).toHaveBeenCalledWith('selectedBackground', 'starry-night');
+  });
+
+  it('applies transition class during route changes', async () => {
+    const { container } = render(
+      <GameProvider>
+        <Layout>
+          <div>Test Content</div>
+        </Layout>
+      </GameProvider>
+    );
+
+    await act(async () => {
+      window.dispatchEvent(new Event('routeChangeStart'));
+    });
+
+    expect(container.firstChild).toHaveClass('opacity-50');
+
+    await act(async () => {
+      jest.advanceTimersByTime(300);
+    });
+
+    expect(container.firstChild).not.toHaveClass('opacity-50');
   });
 });
