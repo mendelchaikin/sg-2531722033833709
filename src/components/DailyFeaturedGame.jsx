@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useGameContext } from '@/context/GameContext';
 import FeaturedGame from './FeaturedGame';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Star } from 'lucide-react';
 
 export default function DailyFeaturedGame() {
   const { games, isLoading, error } = useGameContext();
@@ -42,7 +43,20 @@ export default function DailyFeaturedGame() {
   return (
     <div className="mb-8">
       <h2 className="text-2xl font-bold mb-4">Daily Featured Game</h2>
-      {dailyGame ? <FeaturedGame game={dailyGame} /> : <DailyFeaturedGameSkeleton />}
+      {dailyGame ? (
+        <div>
+          <FeaturedGame game={dailyGame} />
+          <div className="mt-2 flex items-center">
+            <span className="mr-2">Rating:</span>
+            <div className="flex items-center">
+              <Star className="h-5 w-5 text-yellow-400 fill-current mr-1" />
+              <span>{dailyGame.averageRating || 'N/A'}</span>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <DailyFeaturedGameSkeleton />
+      )}
     </div>
   );
 }

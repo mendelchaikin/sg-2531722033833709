@@ -6,25 +6,39 @@ import GameGrid from '@/components/GameGrid';
 import Categories from '@/components/Categories';
 import { useGameContext } from '@/context/GameContext';
 import { Button } from '@/components/ui/button';
-import { ArrowUp } from 'lucide-react';
+import { ArrowUp, ArrowDownAZ, Star } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/components/ui/use-toast';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { InfoIcon } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function Home() {
   const { filteredGames, isLoading, error, filterByCategory, toggleFavorite } = useGameContext();
   const [currentPage, setCurrentPage] = useState(1);
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [sortOption, setSortOption] = useState('default');
   const { user } = useAuth();
   const gamesPerPage = 8;
 
   const categories = ['All', ...new Set(filteredGames.map(game => game.category))];
 
+  const sortGames = (games, option) => {
+    switch (option) {
+      case 'rating':
+        return [...games].sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
+      case 'title':
+        return [...games].sort((a, b) => a.title.localeCompare(b.title));
+      default:
+        return games;
+    }
+  };
+
+  const sortedGames = sortGames(filteredGames, sortOption);
   const indexOfLastGame = currentPage * gamesPerPage;
   const indexOfFirstGame = indexOfLastGame - gamesPerPage;
-  const currentGames = filteredGames.filter(game => !game.isEmbedded).slice(indexOfFirstGame, indexOfLastGame);
+  const currentGames = sortedGames.filter(game => !game.isEmbedded).slice(indexOfFirstGame, indexOfLastGame);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -87,7 +101,27 @@ export default function Home() {
         </AlertDescription>
       </Alert>
       <DailyFeaturedGame />
-      <Categories categories={categories} onSelectCategory={filterByCategory} />
+      <div className="flex justify-between items-center mb-4">
+        <Categories categories={categories} onSelectCategory={filterByCategory} />
+        <Select onValueChange={setSortOption} defaultValue={sortOption}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Sort by..." />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="default">Default</SelectItem>
+            <SelectItem value="rating">
+              <div className="flex items-center">
+                Rating <Star className="ml-2 h-4 w-4" />
+              </div>
+            </SelectItem>
+            <SelectItem value="title">
+              <div className="flex items-center">
+                Title <ArrowDownAZ className="ml-2 h-4 w-4" />
+              </div>
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
       {error && <p className="text-red-500 text-center my-4">{error}</p>}
       {isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -98,9 +132,9 @@ export default function Home() {
       ) : (
         <GameGrid games={currentGames} onFavorite={handleFavorite} />
       )}
-      {filteredGames.filter(game => !game.isEmbedded).length > gamesPerPage && (
+      {sortedGames.filter(game => !game.isEmbedded).length > gamesPerPage && (
         <div className="flex justify-center mt-8 space-x-2">
-          {[...Array(Math.ceil(filteredGames.filter(game => !game.isEmbedded).length / gamesPerPage))].map((_, index) => (
+          {[...Array(Math.ceil(sortedGames.filter(game => !game.isEmbedded).length / gamesPerPage))].map((_, index) => (
             <Button
               key={index}
               onClick={() => paginate(index + 1)}

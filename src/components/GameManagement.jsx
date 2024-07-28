@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/components/ui/use-toast';
-import { Loader2, Edit, Save, X, Search } from 'lucide-react';
+import { Loader2, Edit, Save, X, Search, Star } from 'lucide-react';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 import { Pagination } from '@/components/ui/pagination';
@@ -295,6 +295,10 @@ export default function GameManagement() {
                   <>
                     <span className="font-bold">{game.title} {game.isEmbedded ? '(Embedded)' : ''}</span>
                     <span>Category: {game.category}</span>
+                    <span className="flex items-center">
+                      Rating: {game.averageRating || 'N/A'}
+                      <Star className="ml-1 h-4 w-4 text-yellow-400 fill-current" />
+                    </span>
                     <div className="flex space-x-2">
                       <Button onClick={() => handleEditGame(game)} variant="outline">
                         <Edit className="mr-2 h-4 w-4" />
