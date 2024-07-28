@@ -11,6 +11,14 @@ const nextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/games/:id',
+        destination: '/games/[id]',
+      },
+    ];
+  },
 };
 
 export default nextConfig;

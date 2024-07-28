@@ -8,6 +8,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useGameContext } from '@/context/GameContext';
 import dynamic from 'next/dynamic';
 import { toast } from '@/components/ui/use-toast';
+import Link from 'next/link';
 
 const Confetti = dynamic(() => import('canvas-confetti'), { ssr: false });
 
@@ -135,13 +136,14 @@ export default function GameCard({ game, onFavorite }) {
             </div>
           )}
           <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-            <Button 
-              className="bg-purple-600 hover:bg-purple-700" 
-              aria-label={`Play ${game.title}`}
-              onClick={handlePlayNow}
-            >
-              Play Now
-            </Button>
+            <Link href={`/games/${game.id}`}>
+              <Button 
+                className="bg-purple-600 hover:bg-purple-700" 
+                aria-label={`View details for ${game.title}`}
+              >
+                View Details
+              </Button>
+            </Link>
           </div>
         </CardContent>
         <CardFooter className="bg-gray-700 p-4 mt-auto flex flex-col items-start">
