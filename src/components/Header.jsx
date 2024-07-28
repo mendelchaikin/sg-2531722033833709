@@ -4,9 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 import { motion } from 'framer-motion';
+import LoginModal from './LoginModal';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Header({ onSearch }) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const { user, logout } = useAuth();
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -41,10 +45,20 @@ export default function Header({ onSearch }) {
             <li><Link href="/new" className="hover:text-purple-500 transition-colors">New Games</Link></li>
           </ul>
         </nav>
-        <Button variant="outline" className="bg-purple-600 hover:bg-purple-700 text-white mt-2 sm:mt-0">
-          Login
-        </Button>
+        {user ? (
+          <div className="flex items-center space-x-4">
+            <span>Welcome, {user.name}</span>
+            <Button variant="outline" onClick={logout} className="bg-purple-600 hover:bg-purple-700 text-white">
+              Logout
+            </Button>
+          </div>
+        ) : (
+          <Button variant="outline" onClick={() => setIsLoginModalOpen(true)} className="bg-purple-600 hover:bg-purple-700 text-white mt-2 sm:mt-0">
+            Login
+          </Button>
+        )}
       </div>
+      <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
     </motion.header>
   );
 }
