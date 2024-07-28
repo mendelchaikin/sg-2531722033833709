@@ -103,10 +103,9 @@ export default function GameCard({ game, onFavorite }) {
             <Image
               src={game.image}
               alt={game.title}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover"
-              onLoad={handleImageLoad}
+              layout="fill"
+              objectFit="cover"
+              onLoadingComplete={handleImageLoad}
               onError={handleImageError}
             />
           </motion.div>
@@ -118,10 +117,9 @@ export default function GameCard({ game, onFavorite }) {
             <Image
               src={game.preview}
               alt={`${game.title} preview`}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover"
-              onLoad={handleImageLoad}
+              layout="fill"
+              objectFit="cover"
+              onLoadingComplete={handleImageLoad}
               onError={handleImageError}
             />
           </motion.div>
