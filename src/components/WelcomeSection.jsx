@@ -1,6 +1,13 @@
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/router';
 
 export default function WelcomeSection() {
+  const router = useRouter();
+
+  const handleExplore = () => {
+    router.push('/categories');
+  };
+
   return (
     <motion.section
       initial={{ opacity: 0, y: 20 }}
@@ -14,6 +21,7 @@ export default function WelcomeSection() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         className="bg-white text-purple-600 font-bold py-2 px-6 rounded-full hover:bg-gray-100 transition duration-300"
+        onClick={handleExplore}
       >
         Explore Games
       </motion.button>
