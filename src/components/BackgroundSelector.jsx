@@ -42,25 +42,27 @@ export default function BackgroundSelector({ currentBackground, onSelectBackgrou
       {isOpen && (
         <div className="mt-2 p-2 bg-gray-800 rounded-lg shadow-lg max-h-60 overflow-y-auto animate-fadeIn">
           {backgrounds.map((bg) => (
-            <Tooltip key={bg.value}>
-              <TooltipTrigger asChild>
-                <Button
-                  onClick={() => {
-                    onSelectBackground(bg.value);
-                    setIsOpen(false);
-                  }}
-                  className="flex items-center justify-between w-full text-left mb-2 last:mb-0"
-                  variant="ghost"
-                  aria-label={`Select ${bg.name} background`}
-                >
-                  <span>{bg.preview} {bg.name}</span>
-                  {currentBackground === bg.value && <Check size={16} />}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{bg.description}</p>
-              </TooltipContent>
-            </Tooltip>
+            <TooltipProvider key={bg.value}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={() => {
+                      onSelectBackground(bg.value);
+                      setIsOpen(false);
+                    }}
+                    className="flex items-center justify-between w-full text-left mb-2 last:mb-0"
+                    variant="ghost"
+                    aria-label={`Select ${bg.name} background`}
+                  >
+                    <span>{bg.preview} {bg.name}</span>
+                    {currentBackground === bg.value && <Check size={16} />}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{bg.description}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           ))}
           <Button
             onClick={handleRandomBackground}
