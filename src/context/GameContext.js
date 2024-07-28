@@ -94,6 +94,10 @@ export function GameProvider({ children }) {
         game.id === gameId ? { ...game, isFavorite: !game.isFavorite } : game
       )
     );
+    toast({
+      title: "Favorite Updated",
+      description: "Your favorites have been updated.",
+    });
   }, []);
 
   const addGame = useCallback((newGame) => {

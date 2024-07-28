@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import Layout from '@/components/Layout';
 import WelcomeSection from '@/components/WelcomeSection';
 import FeaturedGame from '@/components/FeaturedGame';
@@ -6,22 +7,20 @@ import Categories from '@/components/Categories';
 import RandomGameRecommendation from '@/components/RandomGameRecommendation';
 import GamingFactOfTheDay from '@/components/GamingFactOfTheDay';
 import { useGameContext } from '@/context/GameContext';
-import { Loader2 } from 'lucide-react';
 
-export default function Home() {
-  const { games, featuredGame, filterByCategory, isLoading } = useGameContext();
+export default function Home({ initialGames, initialFeaturedGame }) {
+  const { games, featuredGame, filterByCategory, setGames, setFeaturedGame } = useGameContext();
+
+  useEffect(() => {
+    if (initialGames) {
+      setGames(initialGames);
+    }
+    if (initialFeaturedGame) {
+      setFeaturedGame(initialFeaturedGame);
+    }
+  }, [initialGames, initialFeaturedGame, setGames, setFeaturedGame]);
 
   const categories = [...new Set(games.map(game => game.category))];
-
-  if (isLoading) {
-    return (
-      <Layout>
-        <div className="flex justify-center items-center h-screen">
-          <Loader2 className="h-8 w-8 animate-spin" />
-        </div>
-      </Layout>
-    );
-  }
 
   return (
     <Layout>
@@ -33,4 +32,19 @@ export default function Home() {
       <GamingFactOfTheDay />
     </Layout>
   );
+}
+
+export async function getServerSideProps() {
+  // In a real application, you would fetch this data from an API or database
+  const initialGames = [
+    // ... your initial games data
+  ];
+  const initialFeaturedGame = initialGames[0]; // or select a random game
+
+  return {
+    props: {
+      initialGames,
+      initialFeaturedGame,
+    },
+  };
 }

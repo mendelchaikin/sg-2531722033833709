@@ -12,14 +12,14 @@ import Link from 'next/link';
 
 const Confetti = dynamic(() => import('canvas-confetti'), { ssr: false });
 
-export default function GameCard({ game, onFavorite }) {
+export default function GameCard({ game }) {
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [userRating, setUserRating] = useState(0);
   const [isRating, setIsRating] = useState(false);
   const { user } = useAuth();
-  const { rateGame } = useGameContext();
+  const { rateGame, toggleFavorite } = useGameContext();
 
   useEffect(() => {
     if (user && game.userRatings && game.userRatings[user.id]) {
@@ -78,6 +78,18 @@ export default function GameCard({ game, onFavorite }) {
       });
     } finally {
       setIsRating(false);
+    }
+  };
+
+  const handleToggleFavorite = () => {
+    if (user) {
+      toggleFavorite(game.id);
+    } else {
+      toast({
+        title: "Login Required",
+        description: "Please log in to favorite games.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -147,16 +159,14 @@ export default function GameCard({ game, onFavorite }) {
         <CardFooter className="bg-gray-700 p-4 mt-auto flex flex-col items-start">
           <div className="flex justify-between items-center w-full mb-2">
             <h3 className="text-lg font-semibold">{game.title}</h3>
-            {user && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onFavorite(game.id)}
-                aria-label={`Favorite ${game.title}`}
-              >
-                <Heart className={game.isFavorite ? "text-red-500" : "text-gray-400"} />
-              </Button>
-            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleToggleFavorite}
+              aria-label={`Favorite ${game.title}`}
+            >
+              <Heart className={game.isFavorite ? "text-red-500 fill-current" : "text-gray-400"} />
+            </Button>
           </div>
           <p className="text-sm text-gray-400 mb-2">{game.category}</p>
           <div className="flex items-center mb-2">

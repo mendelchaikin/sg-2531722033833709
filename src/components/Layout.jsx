@@ -6,9 +6,10 @@ import { useGameContext } from '@/context/GameContext';
 import ThemeToggle from './ThemeToggle';
 import BackgroundSelector from './BackgroundSelector';
 import ErrorBoundary from './ErrorBoundary';
+import { Loader2 } from 'lucide-react';
 
 export default function Layout({ children }) {
-  const { searchGames } = useGameContext();
+  const { searchGames, isLoading, error } = useGameContext();
   const [background, setBackground] = useState('default');
   const [isChangingBackground, setIsChangingBackground] = useState(false);
   const router = useRouter();
@@ -54,7 +55,15 @@ export default function Layout({ children }) {
             <ThemeToggle />
           </div>
           <ErrorBoundary>
-            {children}
+            {isLoading ? (
+              <div className="flex justify-center items-center h-64">
+                <Loader2 className="h-8 w-8 animate-spin" />
+              </div>
+            ) : error ? (
+              <div className="text-red-500 text-center">{error}</div>
+            ) : (
+              children
+            )}
           </ErrorBoundary>
         </main>
         <Footer />
