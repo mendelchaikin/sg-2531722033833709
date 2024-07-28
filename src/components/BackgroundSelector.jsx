@@ -22,6 +22,14 @@ export default function BackgroundSelector({ currentBackground, onSelectBackgrou
   };
 
   const changeBackground = async (bgValue) => {
+    if (bgValue === currentBackground) {
+      toast({
+        title: "No Change",
+        description: "This background is already selected.",
+      });
+      return;
+    }
+
     try {
       setIsChanging(true);
       await onSelectBackground(bgValue);
@@ -78,7 +86,7 @@ export default function BackgroundSelector({ currentBackground, onSelectBackgrou
                 <TooltipTrigger asChild>
                   <Button
                     onClick={() => changeBackground(bg.value)}
-                    className="flex items-center justify-between w-full text-left mb-2 last:mb-0"
+                    className={`flex items-center justify-between w-full text-left mb-2 last:mb-0 ${currentBackground === bg.value ? 'bg-purple-600' : ''}`}
                     variant="ghost"
                     aria-label={`Select ${bg.name} background`}
                     role="menuitem"

@@ -105,7 +105,7 @@ export default function Home() {
       )}
       {showBackToTop && (
         <Button
-          className="fixed bottom-8 right-8 bg-purple-600 hover:bg-purple-700 rounded-full p-3"
+          className="fixed bottom-20 right-4 bg-purple-600 hover:bg-purple-700 rounded-full p-3"
           onClick={scrollToTop}
           aria-label="Back to top"
         >
