@@ -20,7 +20,7 @@ export default function Home({ initialGames, initialFeaturedGame }) {
     }
   }, [initialGames, initialFeaturedGame, setGames, setFeaturedGame]);
 
-  const categories = [...new Set(games.map(game => game.category))];
+  const categories = [...new Set((games || []).map(game => game.category))];
 
   if (!games || games.length === 0) {
     return (
@@ -44,6 +44,7 @@ export default function Home({ initialGames, initialFeaturedGame }) {
 
 export async function getServerSideProps() {
   try {
+    console.log("Fetching initial games data...");
     // In a real application, you would fetch this data from an API or database
     const initialGames = [
       {
@@ -67,7 +68,12 @@ export async function getServerSideProps() {
         averageRating: "4.7"
       }
     ];
-    const initialFeaturedGame = initialGames[0]; // or select a random game
+    
+    const initialFeaturedGame = initialGames.length > 0 ? initialGames[0] : null;
+
+    console.log("Initial games data fetched successfully.");
+    console.log("Initial games count:", initialGames.length);
+    console.log("Initial featured game:", initialFeaturedGame ? initialFeaturedGame.title : "None");
 
     return {
       props: {
