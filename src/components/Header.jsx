@@ -5,13 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export default function Header() {
+export default function Header({ onSearch }) {
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearch = (e) => {
     e.preventDefault();
-    // Implement search functionality here
-    console.log('Searching for:', searchQuery);
+    onSearch(searchQuery);
   };
 
   return (
