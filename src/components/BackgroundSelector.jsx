@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp, Check, Shuffle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from '@/components/ui/use-toast';
+import { Spinner } from '@/components/ui/spinner';
 
 const backgrounds = [
   { name: 'Default', value: 'default', preview: '🌈', description: 'Simple and clean default background' },
@@ -14,6 +15,8 @@ const backgrounds = [
 
 export default function BackgroundSelector({ currentBackground, onSelectBackground }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isChanging, setIsChanging] = useState(false);
+  const [previewBackground, setPreviewBackground] = useState(null);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -34,9 +37,10 @@ export default function BackgroundSelector({ currentBackground, onSelectBackgrou
     changeBackground(randomBg.value);
   };
 
-  const changeBackground = (bgValue) => {
+  const changeBackground = async (bgValue) => {
     try {
-      onSelectBackground(bgValue);
+      setIsChanging(true);
+      await onSelectBackground(bgValue);
       setIsOpen(false);
       const selectedBg = backgrounds.find(bg => bg.value === bgValue);
       toast({
@@ -50,11 +54,13 @@ export default function BackgroundSelector({ currentBackground, onSelectBackgrou
         description: "Failed to change background. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsChanging(false);
     }
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
+    <div className="fixed bottom-4 right-4 z-50 sm:bottom-8 sm:right-8">
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
@@ -63,8 +69,15 @@ export default function BackgroundSelector({ currentBackground, onSelectBackgrou
               className="bg-purple-600 hover:bg-purple-700 text-white"
               aria-label="Change background"
               aria-expanded={isOpen}
+              disabled={isChanging}
             >
-              {isOpen ? <ChevronDown className="mr-2" /> : <ChevronUp className="mr-2" />}
+              {isChanging ? (
+                <Spinner className="mr-2" />
+              ) : isOpen ? (
+                <ChevronDown className="mr-2" />
+              ) : (
+                <ChevronUp className="mr-2" />
+              )}
               Change Background
             </Button>
           </TooltipTrigger>
@@ -81,6 +94,8 @@ export default function BackgroundSelector({ currentBackground, onSelectBackgrou
                 <TooltipTrigger asChild>
                   <Button
                     onClick={() => changeBackground(bg.value)}
+                    onMouseEnter={() => setPreviewBackground(bg.value)}
+                    onMouseLeave={() => setPreviewBackground(null)}
                     className="flex items-center justify-between w-full text-left mb-2 last:mb-0"
                     variant="ghost"
                     aria-label={`Select ${bg.name} background`}
@@ -106,6 +121,9 @@ export default function BackgroundSelector({ currentBackground, onSelectBackgrou
             <span><Shuffle className="mr-2" /> Random</span>
           </Button>
         </div>
+      )}
+      {previewBackground && (
+        <div className={`fixed inset-0 z-[-1] bg-${previewBackground} opacity-50`} />
       )}
     </div>
   );
