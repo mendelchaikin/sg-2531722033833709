@@ -126,3 +126,8 @@
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-out;
 }
+
+/* Smooth background transition */
+.bg-transition {
+  transition: background-image 0.5s ease-in-out;
+}
