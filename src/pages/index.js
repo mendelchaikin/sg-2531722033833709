@@ -22,6 +22,10 @@ export default function Home() {
   const { user } = useAuth();
   const gamesPerPage = 8;
 
+  useEffect(() => {
+    console.log('Home page mounted');
+  }, []);
+
   const categories = ['All', ...new Set(filteredGames.map(game => game.category))];
 
   const sortGames = (games, option) => {
@@ -74,6 +78,10 @@ export default function Home() {
       });
     }
   };
+
+  if (error) {
+    console.error('Error in Home component:', error);
+  }
 
   return (
     <Layout>

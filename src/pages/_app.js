@@ -9,6 +9,10 @@ import { useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 
 function MyApp({ Component, pageProps }) {
+  useEffect(() => {
+    console.log('App mounted');
+  }, []);
+
   return (
     <ErrorBoundary>
       <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
@@ -30,6 +34,7 @@ function AuthGuard({ children }) {
   const router = useRouter();
 
   useEffect(() => {
+    console.log('AuthGuard: User:', user, 'Loading:', loading, 'Path:', router.pathname);
     if (!loading && !user && router.pathname.startsWith('/admin')) {
       router.push('/');
     }
