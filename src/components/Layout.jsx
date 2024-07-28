@@ -10,9 +10,17 @@ export default function Layout({ children }) {
   const [background, setBackground] = useState('default');
   const [isTransitioning, setIsTransitioning] = useState(false);
 
+  useEffect(() => {
+    const savedBackground = localStorage.getItem('selectedBackground');
+    if (savedBackground) {
+      setBackground(savedBackground);
+    }
+  }, []);
+
   const handleBackgroundChange = (newBackground) => {
     setIsTransitioning(true);
     setBackground(newBackground);
+    localStorage.setItem('selectedBackground', newBackground);
   };
 
   useEffect(() => {
