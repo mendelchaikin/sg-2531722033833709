@@ -12,7 +12,7 @@ export default function Home({ initialGames, initialFeaturedGame }) {
   const { games, featuredGame, filterByCategory, setGames, setFeaturedGame } = useGameContext();
 
   useEffect(() => {
-    if (initialGames && initialGames.length > 0) {
+    if (Array.isArray(initialGames) && initialGames.length > 0) {
       setGames(initialGames);
     }
     if (initialFeaturedGame) {
@@ -55,7 +55,9 @@ export async function getServerSideProps() {
         preview: "https://picsum.photos/400/225?random=2",
         description: "This is a sample game description.",
         ratings: [4, 5, 3],
-        averageRating: "4.0"
+        averageRating: "4.0",
+        isFavorite: false,
+        isEmbedded: false,
       },
       {
         id: 2,
@@ -65,11 +67,13 @@ export async function getServerSideProps() {
         preview: "https://picsum.photos/400/225?random=4",
         description: "Another sample game description.",
         ratings: [5, 4, 5],
-        averageRating: "4.7"
+        averageRating: "4.7",
+        isFavorite: false,
+        isEmbedded: false,
       }
     ];
     
-    const initialFeaturedGame = initialGames.length > 0 ? initialGames[0] : null;
+    const initialFeaturedGame = initialGames.length > 0 ? { ...initialGames[0] } : null;
 
     console.log("Initial games data fetched successfully.");
     console.log("Initial games count:", initialGames.length);
@@ -77,8 +81,16 @@ export async function getServerSideProps() {
 
     return {
       props: {
-        initialGames,
-        initialFeaturedGame,
+        initialGames: initialGames.map(game => ({
+          ...game,
+          ratings: game.ratings.length, // Only send the count of ratings
+          userRatings: {}, // Empty object for user ratings
+        })),
+        initialFeaturedGame: initialFeaturedGame ? {
+          ...initialFeaturedGame,
+          ratings: initialFeaturedGame.ratings.length,
+          userRatings: {},
+        } : null,
       },
     };
   } catch (error) {
