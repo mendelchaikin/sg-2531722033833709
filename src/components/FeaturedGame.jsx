@@ -8,16 +8,8 @@ export default function FeaturedGame({ game }) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
 
-  const handleImageLoad = (event) => {
-    if (event.target.src.indexOf(game.image) !== -1 || event.target.src.indexOf(game.preview) !== -1) {
-      setImageLoaded(true);
-    }
-  };
-
-  const handleImageError = () => {
-    setImageError(true);
-    setImageLoaded(true);
-  };
+  const handleImageLoad = () => setImageLoaded(true);
+  const handleImageError = () => setImageError(true);
 
   return (
     <motion.div
@@ -71,7 +63,7 @@ export default function FeaturedGame({ game }) {
           </motion.div>
         )}
       </AnimatePresence>
-      {!imageLoaded && (
+      {!imageLoaded && !imageError && (
         <div className="absolute inset-0 bg-gray-700 animate-pulse flex items-center justify-center">
           <span className="sr-only">Loading...</span>
         </div>
