@@ -17,9 +17,11 @@ export function GameProvider({ children }) {
         setIsLoading(true);
         // Simulating an API call
         await new Promise(resolve => setTimeout(resolve, 1000));
-        setGames(sampleGames);
-        setFilteredGames(sampleGames.filter(game => !game.isEmbedded));
-        setFeaturedGame(getRandomGame(sampleGames.filter(game => !game.isEmbedded)));
+        if (games.length === 0) {
+          setGames(sampleGames);
+          setFilteredGames(sampleGames.filter(game => !game.isEmbedded));
+          setFeaturedGame(getRandomGame(sampleGames.filter(game => !game.isEmbedded)));
+        }
       } catch (err) {
         setError('Failed to load games');
         toast({
@@ -33,7 +35,7 @@ export function GameProvider({ children }) {
     };
 
     initializeGames();
-  }, []);
+  }, [games]);
 
   const getRandomGame = (games) => {
     return games.length > 0 ? games[Math.floor(Math.random() * games.length)] : null;
@@ -173,8 +175,10 @@ export function GameProvider({ children }) {
 
   const value = {
     games,
+    setGames,
     filteredGames,
     featuredGame,
+    setFeaturedGame,
     isLoading,
     error,
     searchGames,

@@ -12,7 +12,7 @@ export default function Home({ initialGames, initialFeaturedGame }) {
   const { games, featuredGame, filterByCategory, setGames, setFeaturedGame } = useGameContext();
 
   useEffect(() => {
-    if (initialGames) {
+    if (initialGames && initialGames.length > 0) {
       setGames(initialGames);
     }
     if (initialFeaturedGame) {
@@ -21,6 +21,14 @@ export default function Home({ initialGames, initialFeaturedGame }) {
   }, [initialGames, initialFeaturedGame, setGames, setFeaturedGame]);
 
   const categories = [...new Set(games.map(game => game.category))];
+
+  if (!games || games.length === 0) {
+    return (
+      <Layout>
+        <div>No games available at the moment. Please check back later.</div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -35,16 +43,45 @@ export default function Home({ initialGames, initialFeaturedGame }) {
 }
 
 export async function getServerSideProps() {
-  // In a real application, you would fetch this data from an API or database
-  const initialGames = [
-    // ... your initial games data
-  ];
-  const initialFeaturedGame = initialGames[0]; // or select a random game
+  try {
+    // In a real application, you would fetch this data from an API or database
+    const initialGames = [
+      {
+        id: 1,
+        title: "Sample Game 1",
+        category: "Action",
+        image: "https://picsum.photos/400/225?random=1",
+        preview: "https://picsum.photos/400/225?random=2",
+        description: "This is a sample game description.",
+        ratings: [4, 5, 3],
+        averageRating: "4.0"
+      },
+      {
+        id: 2,
+        title: "Sample Game 2",
+        category: "Adventure",
+        image: "https://picsum.photos/400/225?random=3",
+        preview: "https://picsum.photos/400/225?random=4",
+        description: "Another sample game description.",
+        ratings: [5, 4, 5],
+        averageRating: "4.7"
+      }
+    ];
+    const initialFeaturedGame = initialGames[0]; // or select a random game
 
-  return {
-    props: {
-      initialGames,
-      initialFeaturedGame,
-    },
-  };
+    return {
+      props: {
+        initialGames,
+        initialFeaturedGame,
+      },
+    };
+  } catch (error) {
+    console.error("Error in getServerSideProps:", error);
+    return {
+      props: {
+        initialGames: [],
+        initialFeaturedGame: null,
+      },
+    };
+  }
 }
