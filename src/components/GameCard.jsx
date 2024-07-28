@@ -6,11 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export default function GameCard({ game }) {
   const [isHovered, setIsHovered] = useState(false);
-  const [imageError, setImageError] = useState(false);
-
-  const handleImageError = () => {
-    setImageError(true);
-  };
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   return (
     <motion.div
@@ -20,7 +16,7 @@ export default function GameCard({ game }) {
       onHoverEnd={() => setIsHovered(false)}
     >
       <Card className="overflow-hidden bg-gray-800 hover:shadow-xl transition-all duration-300">
-        <CardContent className="p-0 relative">
+        <CardContent className="p-0 relative aspect-video">
           <AnimatePresence>
             {isHovered ? (
               <motion.div
@@ -34,10 +30,10 @@ export default function GameCard({ game }) {
                 <Image
                   src={game.preview}
                   alt={`${game.title} preview`}
-                  layout="fill"
-                  objectFit="cover"
-                  className="w-full h-48 object-cover"
-                  onError={handleImageError}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="object-cover"
+                  onLoadingComplete={() => setImageLoaded(true)}
                 />
               </motion.div>
             ) : (
@@ -47,24 +43,24 @@ export default function GameCard({ game }) {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
+                className="absolute inset-0"
               >
-                {imageError ? (
-                  <div className="w-full h-48 bg-gray-700 flex items-center justify-center">
-                    <span className="text-gray-500">{game.title}</span>
-                  </div>
-                ) : (
-                  <Image
-                    src={game.image}
-                    alt={game.title}
-                    width={400}
-                    height={225}
-                    className="w-full h-48 object-cover"
-                    onError={handleImageError}
-                  />
-                )}
+                <Image
+                  src={game.image}
+                  alt={game.title}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="object-cover"
+                  onLoadingComplete={() => setImageLoaded(true)}
+                />
               </motion.div>
             )}
           </AnimatePresence>
+          {!imageLoaded && (
+            <div className="absolute inset-0 bg-gray-700 flex items-center justify-center">
+              <span className="text-gray-500">Loading...</span>
+            </div>
+          )}
           <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
             <Button className="bg-purple-600 hover:bg-purple-700">Play Now</Button>
           </div>
