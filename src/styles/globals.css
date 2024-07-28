@@ -42,8 +42,6 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-    background-size: 50px 50px;
   }
 }
 
@@ -104,4 +102,17 @@
     linear-gradient(60deg, #c777cf 25%, transparent 25.5%, transparent 75%, #c777cf 75%, #c777cf);
   background-size: 80px 140px;
   background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+}
+
+/* Ensure text readability across all backgrounds */
+.bg-starry-night, .bg-ocean-waves, .bg-forest, .bg-geometric {
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .fixed.bottom-4.right-4 {
+    bottom: 1rem;
+    right: 1rem;
+  }
 }

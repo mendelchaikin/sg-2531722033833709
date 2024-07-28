@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Check } from 'lucide-react';
 
 const backgrounds = [
-  { name: 'Default', value: 'default' },
-  { name: 'Starry Night', value: 'starry-night' },
-  { name: 'Ocean Waves', value: 'ocean-waves' },
-  { name: 'Forest', value: 'forest' },
-  { name: 'Geometric', value: 'geometric' },
+  { name: 'Default', value: 'default', preview: '🌈' },
+  { name: 'Starry Night', value: 'starry-night', preview: '🌠' },
+  { name: 'Ocean Waves', value: 'ocean-waves', preview: '🌊' },
+  { name: 'Forest', value: 'forest', preview: '🌳' },
+  { name: 'Geometric', value: 'geometric', preview: '🔷' },
 ];
 
-export default function BackgroundSelector({ onSelectBackground }) {
+export default function BackgroundSelector({ currentBackground, onSelectBackground }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -23,7 +23,7 @@ export default function BackgroundSelector({ onSelectBackground }) {
         Change Background
       </Button>
       {isOpen && (
-        <div className="mt-2 p-2 bg-gray-800 rounded-lg shadow-lg">
+        <div className="mt-2 p-2 bg-gray-800 rounded-lg shadow-lg max-h-60 overflow-y-auto">
           {backgrounds.map((bg) => (
             <Button
               key={bg.value}
@@ -31,10 +31,11 @@ export default function BackgroundSelector({ onSelectBackground }) {
                 onSelectBackground(bg.value);
                 setIsOpen(false);
               }}
-              className="block w-full text-left mb-2 last:mb-0"
+              className="flex items-center justify-between w-full text-left mb-2 last:mb-0"
               variant="ghost"
             >
-              {bg.name}
+              <span>{bg.preview} {bg.name}</span>
+              {currentBackground === bg.value && <Check size={16} />}
             </Button>
           ))}
         </div>
