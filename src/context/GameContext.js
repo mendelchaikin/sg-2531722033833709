@@ -121,14 +121,18 @@ export function GameProvider({ children }) {
     );
   }, []);
 
-  const rateGame = useCallback((gameId, rating) => {
+  const rateGame = useCallback((gameId, rating, userId) => {
     setGames(prevGames =>
       prevGames.map(game =>
         game.id === gameId
           ? {
               ...game,
               ratings: [...(game.ratings || []), rating],
-              averageRating: (((game.ratings || []).reduce((a, b) => a + b, 0) + rating) / ((game.ratings || []).length + 1)).toFixed(1)
+              userRatings: { ...(game.userRatings || {}), [userId]: rating },
+              averageRating: (
+                ((game.ratings || []).reduce((a, b) => a + b, 0) + rating) /
+                ((game.ratings || []).length + 1)
+              ).toFixed(1)
             }
           : game
       )
@@ -139,7 +143,11 @@ export function GameProvider({ children }) {
           ? {
               ...game,
               ratings: [...(game.ratings || []), rating],
-              averageRating: (((game.ratings || []).reduce((a, b) => a + b, 0) + rating) / ((game.ratings || []).length + 1)).toFixed(1)
+              userRatings: { ...(game.userRatings || {}), [userId]: rating },
+              averageRating: (
+                ((game.ratings || []).reduce((a, b) => a + b, 0) + rating) /
+                ((game.ratings || []).length + 1)
+              ).toFixed(1)
             }
           : game
       )

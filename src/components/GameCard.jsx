@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, Star } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useGameContext } from '@/context/GameContext';
@@ -15,8 +15,16 @@ export default function GameCard({ game, onFavorite }) {
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [userRating, setUserRating] = useState(0);
+  const [isRating, setIsRating] = useState(false);
   const { user } = useAuth();
   const { rateGame } = useGameContext();
+
+  useEffect(() => {
+    if (user && game.userRatings && game.userRatings[user.id]) {
+      setUserRating(game.userRatings[user.id]);
+    }
+  }, [user, game.userRatings]);
 
   const handleImageLoad = () => setImageLoaded(true);
   const handleImageError = () => setImageError(true);
@@ -41,17 +49,19 @@ export default function GameCard({ game, onFavorite }) {
       return;
     }
 
+    setIsRating(true);
     try {
       const response = await fetch('/api/games/rate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ gameId: game.id, rating }),
+        body: JSON.stringify({ gameId: game.id, rating, userId: user.id }),
       });
 
       if (response.ok) {
-        rateGame(game.id, rating);
+        rateGame(game.id, rating, user.id);
+        setUserRating(rating);
         toast({
           title: "Rating Submitted",
           description: `You rated ${game.title} ${rating} stars!`,
@@ -65,11 +75,13 @@ export default function GameCard({ game, onFavorite }) {
         description: "Failed to submit rating. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsRating(false);
     }
   };
 
   if (!game) {
-    return null; // or return a placeholder component
+    return null;
   }
 
   return (
@@ -150,23 +162,36 @@ export default function GameCard({ game, onFavorite }) {
           <div className="flex items-center mb-2">
             <span className="mr-2">Rating:</span>
             <div className="flex">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <Star
-                  key={star}
-                  className={`h-5 w-5 ${
-                    star <= (game.averageRating || 0)
-                      ? 'text-yellow-400 fill-current'
-                      : 'text-gray-400'
-                  } cursor-pointer`}
-                  onClick={() => handleRating(star)}
-                />
-              ))}
+              <AnimatePresence>
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <motion.div
+                    key={star}
+                    initial={{ scale: 1 }}
+                    whileHover={{ scale: 1.2 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <Star
+                      className={`h-5 w-5 ${
+                        star <= (userRating || game.averageRating || 0)
+                          ? 'text-yellow-400 fill-current'
+                          : 'text-gray-400'
+                      } cursor-pointer ${isRating ? 'pointer-events-none' : ''}`}
+                      onClick={() => handleRating(star)}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
             <span className="ml-2">{game.averageRating || 'N/A'}</span>
           </div>
           <p className="text-sm text-gray-400">
             {game.ratings ? `${game.ratings.length} ratings` : 'No ratings yet'}
           </p>
+          {userRating > 0 && (
+            <p className="text-sm text-green-400 mt-1">
+              Your rating: {userRating} stars
+            </p>
+          )}
         </CardFooter>
       </Card>
     </motion.div>

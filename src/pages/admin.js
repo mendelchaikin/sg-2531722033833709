@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
 import { useAuth } from '@/context/AuthContext';
 import GameManagement from '@/components/GameManagement';
-import { Loader2, Download } from 'lucide-react';
+import { Loader2, Download, Star } from 'lucide-react';
 import { useGameContext } from '@/context/GameContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -42,11 +42,12 @@ export default function AdminPage() {
   const totalGames = games.length;
   const embeddedGames = games.filter(game => game.isEmbedded).length;
   const regularGames = totalGames - embeddedGames;
+  const averageRating = (games.reduce((sum, game) => sum + (parseFloat(game.averageRating) || 0), 0) / totalGames).toFixed(1);
 
   return (
     <Layout>
       <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <Card>
           <CardHeader>
             <CardTitle>Total Games</CardTitle>
@@ -69,6 +70,16 @@ export default function AdminPage() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">{embeddedGames}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Average Rating</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold flex items-center">
+              {averageRating} <Star className="ml-1 h-5 w-5 text-yellow-400 fill-current" />
+            </p>
           </CardContent>
         </Card>
       </div>
