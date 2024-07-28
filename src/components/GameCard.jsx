@@ -3,9 +3,11 @@ import Image from 'next/image';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { Heart } from 'lucide-react';
+import { Heart, Star } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { useGameContext } from '@/context/GameContext';
 import dynamic from 'next/dynamic';
+import { toast } from '@/components/ui/use-toast';
 
 const Confetti = dynamic(() => import('canvas-confetti'), { ssr: false });
 
@@ -14,6 +16,7 @@ export default function GameCard({ game, onFavorite }) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const { user } = useAuth();
+  const { rateGame } = useGameContext();
 
   const handleImageLoad = () => setImageLoaded(true);
   const handleImageError = () => setImageError(true);
@@ -24,6 +27,43 @@ export default function GameCard({ game, onFavorite }) {
         particleCount: 100,
         spread: 70,
         origin: { y: 0.6 }
+      });
+    }
+  };
+
+  const handleRating = async (rating) => {
+    if (!user) {
+      toast({
+        title: "Login Required",
+        description: "Please log in to rate games.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/games/rate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ gameId: game.id, rating }),
+      });
+
+      if (response.ok) {
+        rateGame(game.id, rating);
+        toast({
+          title: "Rating Submitted",
+          description: `You rated ${game.title} ${rating} stars!`,
+        });
+      } else {
+        throw new Error('Failed to submit rating');
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to submit rating. Please try again.",
+        variant: "destructive",
       });
     }
   };
@@ -92,21 +132,41 @@ export default function GameCard({ game, onFavorite }) {
             </Button>
           </div>
         </CardContent>
-        <CardFooter className="bg-gray-700 p-4 mt-auto flex justify-between items-center">
-          <div>
-            <h3 className="text-lg font-semibold mb-1">{game.title}</h3>
-            <p className="text-sm text-gray-400">{game.category}</p>
+        <CardFooter className="bg-gray-700 p-4 mt-auto flex flex-col items-start">
+          <div className="flex justify-between items-center w-full mb-2">
+            <h3 className="text-lg font-semibold">{game.title}</h3>
+            {user && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => onFavorite(game.id)}
+                aria-label={`Favorite ${game.title}`}
+              >
+                <Heart className={game.isFavorite ? "text-red-500" : "text-gray-400"} />
+              </Button>
+            )}
           </div>
-          {user && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => onFavorite(game.id)}
-              aria-label={`Favorite ${game.title}`}
-            >
-              <Heart className={game.isFavorite ? "text-red-500" : "text-gray-400"} />
-            </Button>
-          )}
+          <p className="text-sm text-gray-400 mb-2">{game.category}</p>
+          <div className="flex items-center mb-2">
+            <span className="mr-2">Rating:</span>
+            <div className="flex">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <Star
+                  key={star}
+                  className={`h-5 w-5 ${
+                    star <= (game.averageRating || 0)
+                      ? 'text-yellow-400 fill-current'
+                      : 'text-gray-400'
+                  } cursor-pointer`}
+                  onClick={() => handleRating(star)}
+                />
+              ))}
+            </div>
+            <span className="ml-2">{game.averageRating || 'N/A'}</span>
+          </div>
+          <p className="text-sm text-gray-400">
+            {game.ratings ? `${game.ratings.length} ratings` : 'No ratings yet'}
+          </p>
         </CardFooter>
       </Card>
     </motion.div>

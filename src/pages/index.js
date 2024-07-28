@@ -83,7 +83,7 @@ export default function Home() {
         <InfoIcon className="h-4 w-4" />
         <AlertTitle>New Feature!</AlertTitle>
         <AlertDescription>
-          You can now change the background of the site. Look for the "Change Background" button at the bottom right corner.
+          You can now rate games from 1 to 5 stars. Look for the star rating under each game.
         </AlertDescription>
       </Alert>
       <DailyFeaturedGame />

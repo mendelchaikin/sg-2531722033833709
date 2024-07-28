@@ -121,6 +121,31 @@ export function GameProvider({ children }) {
     );
   }, []);
 
+  const rateGame = useCallback((gameId, rating) => {
+    setGames(prevGames =>
+      prevGames.map(game =>
+        game.id === gameId
+          ? {
+              ...game,
+              ratings: [...(game.ratings || []), rating],
+              averageRating: (((game.ratings || []).reduce((a, b) => a + b, 0) + rating) / ((game.ratings || []).length + 1)).toFixed(1)
+            }
+          : game
+      )
+    );
+    setFilteredGames(prevGames =>
+      prevGames.map(game =>
+        game.id === gameId
+          ? {
+              ...game,
+              ratings: [...(game.ratings || []), rating],
+              averageRating: (((game.ratings || []).reduce((a, b) => a + b, 0) + rating) / ((game.ratings || []).length + 1)).toFixed(1)
+            }
+          : game
+      )
+    );
+  }, []);
+
   const exportGames = useCallback(() => {
     const gameData = JSON.stringify(games, null, 2);
     const blob = new Blob([gameData], { type: 'application/json' });
@@ -146,6 +171,7 @@ export function GameProvider({ children }) {
     addGame,
     removeGame,
     updateGame,
+    rateGame,
     exportGames
   };
 
