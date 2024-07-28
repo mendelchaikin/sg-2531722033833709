@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from '@/components/ui/use-toast';
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -22,24 +23,35 @@ const signupSchema = loginSchema.extend({
 export default function LoginModal({ isOpen, onClose }) {
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
   const { login, signup } = useAuth();
-  const { register, handleSubmit, formState: { errors }, setValue } = useForm({
+  const { register, handleSubmit, formState: { errors }, setValue, reset } = useForm({
     resolver: zodResolver(isLogin ? loginSchema : signupSchema),
   });
 
   const onSubmit = async (data) => {
     setIsLoading(true);
-    setError('');
     try {
       if (isLogin) {
         await login(data.email, data.password);
+        toast({
+          title: "Login Successful",
+          description: "Welcome back!",
+        });
       } else {
         await signup(data.name, data.email, data.password, data.role);
+        toast({
+          title: "Signup Successful",
+          description: "Your account has been created.",
+        });
       }
+      reset();
       onClose();
     } catch (err) {
-      setError(err.message);
+      toast({
+        title: "Error",
+        description: err.message,
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -91,9 +103,8 @@ export default function LoginModal({ isOpen, onClose }) {
                   {errors.role && <p className="text-red-500 text-sm">{errors.role.message}</p>}
                 </div>
               )}
-              {error && <p className="text-red-500 text-sm">{error}</p>}
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Loading...' : (isLogin ? 'Login' : 'Sign Up')}
+                {isLoading ? 'Processing...' : (isLogin ? 'Login' : 'Sign Up')}
               </Button>
             </motion.form>
             <Button variant="link" onClick={() => setIsLogin(!isLogin)} className="w-full mt-2">

@@ -95,6 +95,19 @@ export function GameProvider({ children }) {
     setFilteredGames(prevGames => prevGames.filter(game => game.id !== gameId));
   }, []);
 
+  const updateGame = useCallback((updatedGame) => {
+    setGames(prevGames => 
+      prevGames.map(game => 
+        game.id === updatedGame.id ? updatedGame : game
+      )
+    );
+    setFilteredGames(prevGames => 
+      prevGames.map(game => 
+        game.id === updatedGame.id ? updatedGame : game
+      )
+    );
+  }, []);
+
   const value = {
     games,
     filteredGames,
@@ -105,7 +118,8 @@ export function GameProvider({ children }) {
     filterByCategory,
     toggleFavorite,
     addGame,
-    removeGame
+    removeGame,
+    updateGame
   };
 
   return (
