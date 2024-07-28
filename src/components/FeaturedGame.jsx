@@ -36,7 +36,7 @@ export default function FeaturedGame({ game }) {
             className="absolute inset-0"
           >
             <Image
-              src={game.preview ?? '/placeholder-image.jpg'}
+              src={game.preview || '/placeholder-image.jpg'}
               alt={`${game.title} preview`}
               fill
               sizes="100vw"
@@ -56,8 +56,8 @@ export default function FeaturedGame({ game }) {
             className="absolute inset-0"
           >
             <Image
-              src={game.image ?? '/placeholder-image.jpg'}
-              alt={game.title ?? 'Game image'}
+              src={game.image || '/placeholder-image.jpg'}
+              alt={game.title || 'Game image'}
               fill
               sizes="100vw"
               className="object-cover brightness-50"
@@ -75,9 +75,9 @@ export default function FeaturedGame({ game }) {
         </div>
       )}
       <div className="absolute inset-0 flex flex-col justify-end p-6 bg-gradient-to-t from-black to-transparent">
-        <h2 className="text-4xl font-bold mb-2">{game.title ?? 'Game Title'}</h2>
-        <p className="text-lg mb-4">{game.description ?? 'Game description not available.'}</p>
-        <Button className="w-40 bg-purple-600 hover:bg-purple-700" aria-label={`Play ${game.title ?? 'this game'}`}>Play Now</Button>
+        <h2 className="text-4xl font-bold mb-2">{game.title || 'Game Title'}</h2>
+        <p className="text-lg mb-4">{game.description || 'Game description not available.'}</p>
+        <Button className="w-40 bg-purple-600 hover:bg-purple-700" aria-label={`Play ${game.title || 'this game'}`}>Play Now</Button>
       </div>
     </motion.div>
   );

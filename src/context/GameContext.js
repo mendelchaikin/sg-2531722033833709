@@ -21,6 +21,7 @@ export function GameProvider({ children }) {
         setFeaturedGame(getRandomGame(sampleGames));
       } catch (err) {
         setError('Failed to load games');
+        console.error('Error initializing games:', err);
       } finally {
         setIsLoading(false);
       }
@@ -30,7 +31,7 @@ export function GameProvider({ children }) {
   }, []);
 
   const getRandomGame = (games) => {
-    return games[Math.floor(Math.random() * games.length)];
+    return games.length > 0 ? games[Math.floor(Math.random() * games.length)] : null;
   };
 
   const searchGames = useCallback((query) => {
@@ -44,6 +45,7 @@ export function GameProvider({ children }) {
       setFilteredGames(filtered);
     } catch (err) {
       setError('An error occurred while searching games');
+      console.error('Error searching games:', err);
     } finally {
       setIsLoading(false);
     }
@@ -61,6 +63,7 @@ export function GameProvider({ children }) {
       }
     } catch (err) {
       setError('An error occurred while filtering games');
+      console.error('Error filtering games:', err);
     } finally {
       setIsLoading(false);
     }
@@ -79,13 +82,28 @@ export function GameProvider({ children }) {
     );
   }, []);
 
+  const value = {
+    games,
+    filteredGames,
+    featuredGame,
+    isLoading,
+    error,
+    searchGames,
+    filterByCategory,
+    toggleFavorite
+  };
+
   return (
-    <GameContext.Provider value={{ games, filteredGames, featuredGame, isLoading, error, searchGames, filterByCategory, toggleFavorite }}>
+    <GameContext.Provider value={value}>
       {children}
     </GameContext.Provider>
   );
 }
 
 export function useGameContext() {
-  return useContext(GameContext);
+  const context = useContext(GameContext);
+  if (context === undefined) {
+    throw new Error('useGameContext must be used within a GameProvider');
+  }
+  return context;
 }
