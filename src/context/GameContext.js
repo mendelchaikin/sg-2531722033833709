@@ -17,8 +17,8 @@ export function GameProvider({ children }) {
         // Simulating an API call
         await new Promise(resolve => setTimeout(resolve, 1000));
         setGames(sampleGames);
-        setFilteredGames(sampleGames);
-        setFeaturedGame(getRandomGame(sampleGames));
+        setFilteredGames(sampleGames.filter(game => !game.isEmbedded));
+        setFeaturedGame(getRandomGame(sampleGames.filter(game => !game.isEmbedded)));
       } catch (err) {
         setError('Failed to load games');
         console.error('Error initializing games:', err);
@@ -39,8 +39,9 @@ export function GameProvider({ children }) {
     setError(null);
     try {
       const filtered = games.filter(game => 
-        game.title.toLowerCase().includes(query.toLowerCase()) ||
-        game.category.toLowerCase().includes(query.toLowerCase())
+        !game.isEmbedded &&
+        (game.title.toLowerCase().includes(query.toLowerCase()) ||
+        game.category.toLowerCase().includes(query.toLowerCase()))
       );
       setFilteredGames(filtered);
     } catch (err) {
@@ -56,9 +57,9 @@ export function GameProvider({ children }) {
     setError(null);
     try {
       if (category === 'All') {
-        setFilteredGames(games);
+        setFilteredGames(games.filter(game => !game.isEmbedded));
       } else {
-        const filtered = games.filter(game => game.category === category);
+        const filtered = games.filter(game => !game.isEmbedded && game.category === category);
         setFilteredGames(filtered);
       }
     } catch (err) {
@@ -82,6 +83,18 @@ export function GameProvider({ children }) {
     );
   }, []);
 
+  const addGame = useCallback((newGame) => {
+    setGames(prevGames => [...prevGames, { ...newGame, id: Date.now() }]);
+    if (!newGame.isEmbedded) {
+      setFilteredGames(prevGames => [...prevGames, { ...newGame, id: Date.now() }]);
+    }
+  }, []);
+
+  const removeGame = useCallback((gameId) => {
+    setGames(prevGames => prevGames.filter(game => game.id !== gameId));
+    setFilteredGames(prevGames => prevGames.filter(game => game.id !== gameId));
+  }, []);
+
   const value = {
     games,
     filteredGames,
@@ -90,7 +103,9 @@ export function GameProvider({ children }) {
     error,
     searchGames,
     filterByCategory,
-    toggleFavorite
+    toggleFavorite,
+    addGame,
+    removeGame
   };
 
   return (
