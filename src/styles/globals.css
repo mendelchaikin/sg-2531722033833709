@@ -46,3 +46,62 @@
     background-size: 50px 50px;
   }
 }
+
+.bg-default {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+.bg-starry-night {
+  background-color: #0a0a2a;
+  background-image: 
+    radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+    radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),
+    radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 40px),
+    radial-gradient(rgba(255,255,255,.4), rgba(255,255,255,.1) 2px, transparent 30px);
+  background-size: 550px 550px, 350px 350px, 250px 250px, 150px 150px;
+  background-position: 0 0, 40px 60px, 130px 270px, 70px 100px;
+  animation: twinkle 10s infinite linear;
+}
+
+@keyframes twinkle {
+  0% { background-position: 0 0, 40px 60px, 130px 270px, 70px 100px; }
+  100% { background-position: 0 -550px, 40px -490px, 130px -280px, 70px -450px; }
+}
+
+.bg-ocean-waves {
+  background: linear-gradient(to bottom, #0077be, #00a6e6);
+  background-size: 100% 100%;
+  animation: wave 10s ease-in-out infinite;
+}
+
+@keyframes wave {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.bg-forest {
+  background-color: #228B22;
+  background-image: 
+    linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+  animation: sway 5s infinite linear;
+}
+
+@keyframes sway {
+  0% { background-position: 0 0; }
+  100% { background-position: 20px 20px; }
+}
+
+.bg-geometric {
+  background-color: #4a0e4e;
+  background-image: linear-gradient(30deg, #7c2483 12%, transparent 12.5%, transparent 87%, #7c2483 87.5%, #7c2483),
+    linear-gradient(150deg, #7c2483 12%, transparent 12.5%, transparent 87%, #7c2483 87.5%, #7c2483),
+    linear-gradient(30deg, #7c2483 12%, transparent 12.5%, transparent 87%, #7c2483 87.5%, #7c2483),
+    linear-gradient(150deg, #7c2483 12%, transparent 12.5%, transparent 87%, #7c2483 87.5%, #7c2483),
+    linear-gradient(60deg, #c777cf 25%, transparent 25.5%, transparent 75%, #c777cf 75%, #c777cf),
+    linear-gradient(60deg, #c777cf 25%, transparent 25.5%, transparent 75%, #c777cf 75%, #c777cf);
+  background-size: 80px 140px;
+  background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+}
