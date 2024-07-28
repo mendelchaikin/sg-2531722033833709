@@ -1,6 +1,13 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import BackgroundSelector from '../BackgroundSelector';
 
+jest.mock('@/components/ui/tooltip', () => ({
+  Tooltip: ({ children }) => children,
+  TooltipContent: ({ children }) => children,
+  TooltipProvider: ({ children }) => children,
+  TooltipTrigger: ({ children }) => children,
+}));
+
 describe('BackgroundSelector', () => {
   const mockOnSelectBackground = jest.fn();
 
