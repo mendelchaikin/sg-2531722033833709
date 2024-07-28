@@ -61,14 +61,18 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {isLoading ? (
-        <Skeleton className="h-96 w-full mb-8" />
-      ) : (
-        <DailyFeaturedGame />
-      )}
+      <DailyFeaturedGame />
       <Categories categories={categories} onSelectCategory={filterByCategory} />
       {error && <p className="text-red-500 text-center my-4">{error}</p>}
-      <GameGrid games={currentGames} isLoading={isLoading} onFavorite={handleFavorite} />
+      {isLoading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {[...Array(8)].map((_, index) => (
+            <Skeleton key={index} className="h-64 w-full" />
+          ))}
+        </div>
+      ) : (
+        <GameGrid games={currentGames} onFavorite={handleFavorite} />
+      )}
       {filteredGames.length > gamesPerPage && (
         <div className="flex justify-center mt-8 space-x-2">
           {[...Array(Math.ceil(filteredGames.length / gamesPerPage))].map((_, index) => (

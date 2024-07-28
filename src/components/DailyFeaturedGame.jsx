@@ -9,13 +9,16 @@ export default function DailyFeaturedGame() {
 
   useEffect(() => {
     const selectDailyGame = () => {
+      if (games.length === 0) return;
+
       const today = new Date().toDateString();
       const storedDate = localStorage.getItem('dailyGameDate');
       const storedGameId = localStorage.getItem('dailyGameId');
 
-      if (storedDate === today && storedGameId && games.length > 0) {
-        setDailyGame(games.find(game => game.id === parseInt(storedGameId)) || null);
-      } else if (games.length > 0) {
+      if (storedDate === today && storedGameId) {
+        const foundGame = games.find(game => game.id === parseInt(storedGameId));
+        setDailyGame(foundGame || games[0]);
+      } else {
         const randomGame = games[Math.floor(Math.random() * games.length)];
         setDailyGame(randomGame);
         localStorage.setItem('dailyGameDate', today);
@@ -39,7 +42,7 @@ export default function DailyFeaturedGame() {
   return (
     <div className="mb-8">
       <h2 className="text-2xl font-bold mb-4">Daily Featured Game</h2>
-      <FeaturedGame game={dailyGame} />
+      {dailyGame ? <FeaturedGame game={dailyGame} /> : <DailyFeaturedGameSkeleton />}
     </div>
   );
 }
