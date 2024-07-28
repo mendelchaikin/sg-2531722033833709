@@ -17,8 +17,14 @@ export default function Layout({ children }) {
   }, []);
 
   const handleBackgroundChange = (newBackground) => {
-    setBackground(newBackground);
-    localStorage.setItem('selectedBackground', newBackground);
+    return new Promise((resolve) => {
+      setBackground(newBackground);
+      localStorage.setItem('selectedBackground', newBackground);
+      // Simulate a delay to show loading state
+      setTimeout(() => {
+        resolve();
+      }, 500);
+    });
   };
 
   return (
