@@ -4,14 +4,19 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import { GameProvider } from '@/context/GameContext';
 import { AuthProvider } from '@/context/AuthContext';
 import { ThemeProvider } from 'next-themes';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import { useAuth } from '@/context/AuthContext';
 
-export default function App({ Component, pageProps }) {
+function MyApp({ Component, pageProps }) {
   return (
     <ErrorBoundary>
       <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
         <AuthProvider>
           <GameProvider>
-            <Component {...pageProps} />
+            <AuthGuard>
+              <Component {...pageProps} />
+            </AuthGuard>
             <Toaster />
           </GameProvider>
         </AuthProvider>
@@ -19,3 +24,22 @@ export default function App({ Component, pageProps }) {
     </ErrorBoundary>
   );
 }
+
+function AuthGuard({ children }) {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user && router.pathname.startsWith('/admin')) {
+      router.push('/');
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  return children;
+}
+
+export default MyApp;

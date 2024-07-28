@@ -53,7 +53,7 @@ export default function Header() {
         </nav>
         {user ? (
           <div className="flex items-center space-x-4">
-            <span>Welcome, {user.name}</span>
+            <span>Welcome, {user.name} {user.role === 'admin' && <span className="text-purple-500">(Admin)</span>}</span>
             <Button variant="outline" onClick={logout} className="bg-purple-600 hover:bg-purple-700 text-white">
               Logout
             </Button>
