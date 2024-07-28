@@ -13,11 +13,12 @@ export function GameProvider({ children }) {
   useEffect(() => {
     const initializeGames = async () => {
       try {
+        setIsLoading(true);
         // Simulating an API call
         await new Promise(resolve => setTimeout(resolve, 1000));
         setGames(sampleGames);
         setFilteredGames(sampleGames);
-        setFeaturedGame(sampleGames[0]);
+        setFeaturedGame(getRandomGame(sampleGames));
       } catch (err) {
         setError('Failed to load games');
       } finally {
@@ -27,6 +28,10 @@ export function GameProvider({ children }) {
 
     initializeGames();
   }, []);
+
+  const getRandomGame = (games) => {
+    return games[Math.floor(Math.random() * games.length)];
+  };
 
   const searchGames = useCallback((query) => {
     setIsLoading(true);

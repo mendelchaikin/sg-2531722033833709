@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Layout from '@/components/Layout';
-import FeaturedGame from '@/components/FeaturedGame';
+import DailyFeaturedGame from '@/components/DailyFeaturedGame';
 import GameGrid from '@/components/GameGrid';
 import Categories from '@/components/Categories';
 import { useGameContext } from '@/context/GameContext';
@@ -10,7 +10,7 @@ import { ArrowUp } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 export default function Home() {
-  const { filteredGames, featuredGame, isLoading, error, filterByCategory, toggleFavorite } = useGameContext();
+  const { filteredGames, isLoading, error, filterByCategory, toggleFavorite } = useGameContext();
   const [currentPage, setCurrentPage] = useState(1);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const { user } = useAuth();
@@ -51,14 +51,6 @@ export default function Home() {
     }
   };
 
-  if (isLoading) {
-    return <Layout><div>Loading...</div></Layout>;
-  }
-
-  if (error) {
-    return <Layout><div>Error: {error}</div></Layout>;
-  }
-
   return (
     <Layout>
       <Head>
@@ -68,8 +60,9 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <FeaturedGame game={featuredGame} />
+      <DailyFeaturedGame />
       <Categories categories={categories} onSelectCategory={filterByCategory} />
+      {error && <p className="text-red-500 text-center my-4">{error}</p>}
       <GameGrid games={currentGames} isLoading={isLoading} onFavorite={handleFavorite} />
       {filteredGames.length > gamesPerPage && (
         <div className="flex justify-center mt-8 space-x-2">
