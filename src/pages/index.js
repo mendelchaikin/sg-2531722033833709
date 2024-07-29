@@ -1,26 +1,21 @@
-import { useEffect } from 'react';
 import Layout from '@/components/Layout';
 import WelcomeSection from '@/components/WelcomeSection';
 import PopularGames from '@/components/PopularGames';
 import Categories from '@/components/Categories';
+import GamingFactOfTheDay from '@/components/GamingFactOfTheDay';
+import RandomGameRecommendation from '@/components/RandomGameRecommendation';
 import { useGameContext } from '@/context/GameContext';
-import { sampleGames } from '@/data/sampleGames';
 
 export default function Home() {
-  const { setGames } = useGameContext();
-
-  useEffect(() => {
-    setGames(sampleGames);
-    console.log('Home component mounted - Client side log');
-  }, [setGames]);
-
-  console.log('Home component rendering - This should appear in server logs');
+  const { games } = useGameContext();
 
   return (
     <Layout>
       <WelcomeSection />
-      <PopularGames games={sampleGames} />
-      <Categories categories={[...new Set(sampleGames.map(game => game.category))]} />
+      <PopularGames games={games} />
+      <Categories categories={['Action', 'Adventure', 'Puzzle', 'Strategy', 'Sports']} />
+      <GamingFactOfTheDay />
+      <RandomGameRecommendation />
     </Layout>
   );
 }

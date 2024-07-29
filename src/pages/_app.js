@@ -1,13 +1,17 @@
 import "@/styles/globals.css";
 import { GameProvider } from '@/context/GameContext';
+import { AuthProvider } from '@/context/AuthContext';
+import { ThemeProvider } from 'next-themes';
 
 function MyApp({ Component, pageProps }) {
-  console.log('MyApp rendering - This should appear in server logs');
-
   return (
-    <GameProvider>
-      <Component {...pageProps} />
-    </GameProvider>
+    <ThemeProvider attribute="class" defaultTheme="dark">
+      <AuthProvider>
+        <GameProvider>
+          <Component {...pageProps} />
+        </GameProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
