@@ -6,7 +6,16 @@ import Categories from '@/components/Categories';
 import { useGameContext } from '@/context/GameContext';
 import { sampleGames } from '@/data/sampleGames';
 
-const Home = () => {
+export async function getServerSideProps() {
+  const initialFeaturedGame = sampleGames[0] || null; // Ensure it's not undefined
+  return {
+    props: {
+      initialFeaturedGame,
+    },
+  };
+}
+
+const Home = ({ initialFeaturedGame }) => {
   const { setGames } = useGameContext();
 
   useEffect(() => {
