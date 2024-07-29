@@ -9,4 +9,10 @@ function MyApp({ Component, pageProps }) {
   );
 }
 
+MyApp.getInitialProps = async (appContext) => {
+  console.log('MyApp.getInitialProps called');
+  const appProps = await App.getInitialProps(appContext);
+  return { ...appProps };
+};
+
 export default MyApp;
