@@ -9,24 +9,7 @@ import GamingFactOfTheDay from '@/components/GamingFactOfTheDay';
 import { useGameContext } from '@/context/GameContext';
 import ErrorBoundary from '@/components/ErrorBoundary';
 
-// Helper function to sanitize game objects for serialization
-const sanitizeGame = (game) => {
-  return {
-    id: game.id || 0,
-    title: game.title || '',
-    category: game.category || '',
-    image: game.image || '',
-    preview: game.preview || '',
-    description: game.description || '',
-    averageRating: game.averageRating || 'N/A',
-    isFavorite: !!game.isFavorite,
-    isEmbedded: !!game.isEmbedded,
-    ratings: Array.isArray(game.ratings) ? game.ratings.length : 0,
-    userRatings: game.userRatings || {},
-  };
-};
-
-export default function Home({ initialGames, initialFeaturedGame }) {
+const Home = ({ initialGames, initialFeaturedGame }) => {
   const { games, featuredGame, filterByCategory, setGames, setFeaturedGame } = useGameContext();
 
   useEffect(() => {
@@ -52,12 +35,11 @@ export default function Home({ initialGames, initialFeaturedGame }) {
       </Layout>
     </ErrorBoundary>
   );
-}
+};
 
 export async function getServerSideProps() {
   try {
     console.log("Fetching initial games data...");
-    // In a real application, you would fetch this data from an API or database
     const initialGames = [
       {
         id: 1,
@@ -85,19 +67,13 @@ export async function getServerSideProps() {
       }
     ];
     
-    const sanitizedGames = initialGames.map(sanitizeGame);
-    console.log("Sanitized games:", JSON.stringify(sanitizedGames, null, 2));
-
-    const sanitizedFeaturedGame = sanitizedGames.length > 0 ? sanitizedGames[0] : null;
-    console.log("Sanitized featured game:", JSON.stringify(sanitizedFeaturedGame, null, 2));
-
-    console.log("Initial games data fetched and sanitized successfully.");
-    console.log("Sanitized games count:", sanitizedGames.length);
+    console.log("Initial games data fetched successfully.");
+    console.log("Initial games count:", initialGames.length);
 
     return {
       props: {
-        initialGames: sanitizedGames,
-        initialFeaturedGame: sanitizedFeaturedGame,
+        initialGames,
+        initialFeaturedGame: initialGames[0] || null,
       },
     };
   } catch (error) {
@@ -110,3 +86,5 @@ export async function getServerSideProps() {
     };
   }
 }
+
+export default Home;
