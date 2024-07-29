@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 
-export default function Categories({ categories, onSelectCategory }) {
+export default function Categories({ categories }) {
   return (
     <div className="my-8">
       <h2 className="text-2xl font-semibold mb-4">Categories</h2>
