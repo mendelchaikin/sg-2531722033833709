@@ -19,3 +19,5 @@ export default function Home() {
     </Layout>
   );
 }
+
+// Remove any getServerSideProps function if it exists
