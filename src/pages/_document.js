@@ -1,13 +1,8 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 
 class MyDocument extends Document {
-  static async getInitialProps(ctx) {
-    console.log('MyDocument.getInitialProps called');
-    const initialProps = await Document.getInitialProps(ctx);
-    return { ...initialProps };
-  }
-
   render() {
+    console.log('MyDocument: Rendering');
     return (
       <Html>
         <Head />

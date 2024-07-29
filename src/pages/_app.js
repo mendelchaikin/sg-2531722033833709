@@ -1,18 +1,12 @@
 import "@/styles/globals.css";
 
 function MyApp({ Component, pageProps }) {
-  console.log('Rendering MyApp');
+  console.log('MyApp: Rendering with props:', { pageProps });
   return (
     <div>
       <Component {...pageProps} />
     </div>
   );
 }
-
-MyApp.getInitialProps = async (appContext) => {
-  console.log('MyApp.getInitialProps called');
-  const appProps = await App.getInitialProps(appContext);
-  return { ...appProps };
-};
 
 export default MyApp;

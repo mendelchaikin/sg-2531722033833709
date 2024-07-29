@@ -14,11 +14,4 @@ const Home = () => {
   );
 };
 
-export async function getServerSideProps() {
-  console.log('Executing getServerSideProps for Home page');
-  return {
-    props: {}
-  };
-}
-
 export default Home;
