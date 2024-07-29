@@ -6,31 +6,21 @@ import Categories from '@/components/Categories';
 import { useGameContext } from '@/context/GameContext';
 import { sampleGames } from '@/data/sampleGames';
 
-export async function getServerSideProps() {
-  return {
-    props: {
-      initialGames: sampleGames,
-    },
-  };
-}
-
-const Home = ({ initialGames }) => {
+export default function Home() {
   const { setGames } = useGameContext();
 
   useEffect(() => {
-    setGames(initialGames);
+    setGames(sampleGames);
     console.log('Home component mounted - Client side log');
-  }, [setGames, initialGames]);
+  }, [setGames]);
 
   console.log('Home component rendering - This should appear in server logs');
 
   return (
     <Layout>
       <WelcomeSection />
-      <PopularGames games={initialGames} />
-      <Categories categories={[...new Set(initialGames.map(game => game.category))]} />
+      <PopularGames games={sampleGames} />
+      <Categories categories={[...new Set(sampleGames.map(game => game.category))]} />
     </Layout>
   );
-};
-
-export default Home;
+}
