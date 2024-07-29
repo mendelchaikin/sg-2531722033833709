@@ -4,7 +4,7 @@ class MyDocument extends Document {
   render() {
     console.log('MyDocument rendering - This should appear in server logs');
     return (
-      <Html>
+      <Html lang="en">
         <Head />
         <body>
           <Main />
