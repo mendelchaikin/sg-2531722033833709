@@ -3,6 +3,14 @@ import { useEffect } from 'react';
 const Home = () => {
   useEffect(() => {
     console.log('Home component mounted (client-side)');
+    try {
+      // Attempt to access window to ensure this only runs client-side
+      if (typeof window !== 'undefined') {
+        console.log('Window object is available');
+      }
+    } catch (error) {
+      console.error('Error in Home component useEffect:', error);
+    }
   }, []);
 
   console.log('Rendering Home component');
@@ -13,5 +21,11 @@ const Home = () => {
     </div>
   );
 };
+
+// Add this to force server-side execution
+export async function getServerSideProps() {
+  console.log('Executing getServerSideProps in index.js');
+  return { props: {} };
+}
 
 export default Home;
