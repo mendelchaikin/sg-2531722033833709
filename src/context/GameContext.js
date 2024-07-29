@@ -1,5 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { sampleGames } from '@/data/sampleGames';
+import { createContext, useContext, useState, useCallback } from 'react';
 import { toast } from '@/components/ui/use-toast';
 
 const GameContext = createContext();
@@ -7,49 +6,16 @@ const GameContext = createContext();
 export function GameProvider({ children }) {
   const [games, setGames] = useState([]);
   const [filteredGames, setFilteredGames] = useState([]);
-  const [featuredGame, setFeaturedGame] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const initializeGames = async () => {
-      try {
-        setIsLoading(true);
-        // Simulating an API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        if (games.length === 0) {
-          const initialGames = sampleGames.length > 0 ? sampleGames : [];
-          setGames(initialGames);
-          setFilteredGames(initialGames.filter(game => !game.isEmbedded));
-          setFeaturedGame(getRandomGame(initialGames.filter(game => !game.isEmbedded)));
-        }
-      } catch (err) {
-        setError('Failed to load games');
-        toast({
-          title: "Error",
-          description: "Failed to load games. Please try again later.",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    initializeGames();
-  }, [games]);
-
-  const getRandomGame = (games) => {
-    return games.length > 0 ? games[Math.floor(Math.random() * games.length)] : null;
-  };
 
   const searchGames = useCallback((query) => {
     setIsLoading(true);
     setError(null);
     try {
       const filtered = games.filter(game => 
-        !game.isEmbedded &&
-        (game.title.toLowerCase().includes(query.toLowerCase()) ||
-        game.category.toLowerCase().includes(query.toLowerCase()))
+        game.title.toLowerCase().includes(query.toLowerCase()) ||
+        game.category.toLowerCase().includes(query.toLowerCase())
       );
       setFilteredGames(filtered);
     } catch (err) {
@@ -69,9 +35,9 @@ export function GameProvider({ children }) {
     setError(null);
     try {
       if (category === 'All') {
-        setFilteredGames(games.filter(game => !game.isEmbedded));
+        setFilteredGames(games);
       } else {
-        const filtered = games.filter(game => !game.isEmbedded && game.category === category);
+        const filtered = games.filter(game => game.category === category);
         setFilteredGames(filtered);
       }
     } catch (err) {
@@ -86,110 +52,14 @@ export function GameProvider({ children }) {
     }
   }, [games]);
 
-  const toggleFavorite = useCallback((gameId) => {
-    setGames(prevGames => 
-      prevGames.map(game => 
-        game.id === gameId ? { ...game, isFavorite: !game.isFavorite } : game
-      )
-    );
-    setFilteredGames(prevGames => 
-      prevGames.map(game => 
-        game.id === gameId ? { ...game, isFavorite: !game.isFavorite } : game
-      )
-    );
-    toast({
-      title: "Favorite Updated",
-      description: "Your favorites have been updated.",
-    });
-  }, []);
-
-  const addGame = useCallback((newGame) => {
-    setGames(prevGames => [...prevGames, { ...newGame, id: Date.now() }]);
-    if (!newGame.isEmbedded) {
-      setFilteredGames(prevGames => [...prevGames, { ...newGame, id: Date.now() }]);
-    }
-  }, []);
-
-  const removeGame = useCallback((gameId) => {
-    setGames(prevGames => prevGames.filter(game => game.id !== gameId));
-    setFilteredGames(prevGames => prevGames.filter(game => game.id !== gameId));
-  }, []);
-
-  const updateGame = useCallback((updatedGame) => {
-    setGames(prevGames => 
-      prevGames.map(game => 
-        game.id === updatedGame.id ? updatedGame : game
-      )
-    );
-    setFilteredGames(prevGames => 
-      prevGames.map(game => 
-        game.id === updatedGame.id ? updatedGame : game
-      )
-    );
-  }, []);
-
-  const rateGame = useCallback((gameId, rating, userId) => {
-    setGames(prevGames =>
-      prevGames.map(game =>
-        game.id === gameId
-          ? {
-              ...game,
-              ratings: [...(game.ratings || []), rating],
-              userRatings: { ...(game.userRatings || {}), [userId]: rating },
-              averageRating: (
-                ((game.ratings || []).reduce((a, b) => a + b, 0) + rating) /
-                ((game.ratings || []).length + 1)
-              ).toFixed(1)
-            }
-          : game
-      )
-    );
-    setFilteredGames(prevGames =>
-      prevGames.map(game =>
-        game.id === gameId
-          ? {
-              ...game,
-              ratings: [...(game.ratings || []), rating],
-              userRatings: { ...(game.userRatings || {}), [userId]: rating },
-              averageRating: (
-                ((game.ratings || []).reduce((a, b) => a + b, 0) + rating) /
-                ((game.ratings || []).length + 1)
-              ).toFixed(1)
-            }
-          : game
-      )
-    );
-  }, []);
-
-  const exportGames = useCallback(() => {
-    const gameData = JSON.stringify(games, null, 2);
-    const blob = new Blob([gameData], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'game_data.json';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  }, [games]);
-
   const value = {
     games,
     setGames,
     filteredGames,
-    featuredGame,
-    setFeaturedGame,
     isLoading,
     error,
     searchGames,
     filterByCategory,
-    toggleFavorite,
-    addGame,
-    removeGame,
-    updateGame,
-    rateGame,
-    exportGames
   };
 
   return (

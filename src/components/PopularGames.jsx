@@ -1,6 +1,10 @@
 import GameCard from './GameCard';
 
 export default function PopularGames({ games }) {
+  if (!games || games.length === 0) {
+    return <div>No games available at the moment.</div>;
+  }
+
   return (
     <section className="my-8">
       <h2 className="text-2xl font-semibold mb-4">Popular Games</h2>
