@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default class ErrorBoundary extends React.Component {
+class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
     this.state = { hasError: false, error: null, errorInfo: null };
@@ -15,7 +15,7 @@ export default class ErrorBoundary extends React.Component {
       error: error,
       errorInfo: errorInfo
     });
-    console.log('Error:', error, errorInfo);
+    console.error('ErrorBoundary caught an error:', error, errorInfo);
   }
 
   render() {
@@ -41,3 +41,5 @@ export default class ErrorBoundary extends React.Component {
     return this.props.children;
   }
 }
+
+export default ErrorBoundary;

@@ -1,17 +1,17 @@
 import "@/styles/globals.css";
 import { GameProvider } from '@/context/GameContext';
-import { AuthProvider } from '@/context/AuthContext';
 import { ThemeProvider } from 'next-themes';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 function MyApp({ Component, pageProps }) {
   return (
-    <ThemeProvider attribute="class" defaultTheme="dark">
-      <AuthProvider>
+    <ErrorBoundary>
+      <ThemeProvider attribute="class" defaultTheme="dark">
         <GameProvider>
           <Component {...pageProps} />
         </GameProvider>
-      </AuthProvider>
-    </ThemeProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }
 

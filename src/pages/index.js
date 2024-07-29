@@ -4,8 +4,6 @@ import WelcomeSection from '@/components/WelcomeSection';
 import FeaturedGame from '@/components/FeaturedGame';
 import PopularGames from '@/components/PopularGames';
 import Categories from '@/components/Categories';
-import RandomGameRecommendation from '@/components/RandomGameRecommendation';
-import GamingFactOfTheDay from '@/components/GamingFactOfTheDay';
 import { useGameContext } from '@/context/GameContext';
 import ErrorBoundary from '@/components/ErrorBoundary';
 
@@ -13,22 +11,23 @@ const Home = ({ initialGames }) => {
   const { games, setGames, filterByCategory } = useGameContext();
 
   useEffect(() => {
+    console.log('Home component mounted');
     if (Array.isArray(initialGames) && initialGames.length > 0) {
+      console.log('Setting initial games:', initialGames);
       setGames(initialGames);
     }
   }, [initialGames, setGames]);
 
   const categories = [...new Set((games || []).map(game => game.category))];
 
+  console.log('Rendering Home component');
   return (
     <ErrorBoundary>
       <Layout>
         <WelcomeSection />
-        <FeaturedGame game={games[0]} />
+        {games.length > 0 && <FeaturedGame game={games[0]} />}
         <PopularGames games={games} />
         <Categories categories={categories} onSelectCategory={filterByCategory} />
-        <RandomGameRecommendation />
-        <GamingFactOfTheDay />
       </Layout>
     </ErrorBoundary>
   );
